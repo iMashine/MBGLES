@@ -39,9 +39,7 @@ SOURCES += \
         mainwidget.cpp \
     mainopenglwidget.cpp \
     emitter.cpp \
-    obstacle.cpp \
     ptextures.cpp \
-    range.cpp \
     include/_core/mp.cpp \
     include/_core/platform_win_posix.cpp \
     emitterlist.cpp \
@@ -52,9 +50,7 @@ HEADERS += \
         mainwidget.h \
     mainopenglwidget.h \
     emitter.h \
-    obstacle.h \
     ptextures.h \
-    range.h \
     include/_core/magic.h \
     include/_core/mp.h \
     include/_core/platform_win_posix.h \

@@ -1,7 +1,6 @@
 #ifndef EMITTER_H
 #define EMITTER_H
 
-#include "range.h"
 #include "mp.h"
 #include "platform_win_posix.h"
 
