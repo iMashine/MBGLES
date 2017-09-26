@@ -40,7 +40,7 @@ public:
 
     void mouseMoveEvent(QMouseEvent *event) override;
 
-    void keyPressEvent(QKeyEvent *event) override;
+    void keyPressEvent(QKeyEvent *event);
 
     MainOpenGLWidget *m_mainOpenGLWidget = nullptr;
 
@@ -57,8 +57,9 @@ public:
 
     void refreshUI();
 
-private:
     unsigned int m_currentEmitter = false;
+
+private:
 
     // скорость
     QSlider *m_particlesSpeedSettingSlider;

@@ -165,8 +165,6 @@ MainWidget::MainWidget(QWidget *parent)
 
     m_mainLayout->addWidget(m_mainOpenGLWidget);
     m_mainLayout->addWidget(m_mainMenu);
-
-
 }
 
 MainWidget::~MainWidget()
@@ -216,43 +214,7 @@ void MainWidget::mouseMoveEvent(QMouseEvent *event)
 
 void MainWidget::keyPressEvent(QKeyEvent *event)
 {
-    QWidget::keyPressEvent(event);
 
-    if (m_emittersList->selection() != Q_NULLPTR) {
-        m_currentEmitter = m_emittersList->selection()->GetId();
-        switch (event->key()) {
-        case Qt::Key_Left: {
-            MAGIC_POSITION pos;
-            Magic_GetEmitterPosition(m_currentEmitter, &pos);
-            pos.x -= 1;
-            Magic_SetEmitterPosition(m_currentEmitter, &pos);
-            break;
-        }
-        case Qt::Key_Right: {
-            MAGIC_POSITION pos;
-            Magic_GetEmitterPosition(m_currentEmitter, &pos);
-            pos.x += 1;
-            Magic_SetEmitterPosition(m_currentEmitter, &pos);
-            break;
-        }
-        case Qt::Key_Down: {
-            MAGIC_POSITION pos;
-            Magic_GetEmitterPosition(m_currentEmitter, &pos);
-            pos.y -= 1;
-            Magic_SetEmitterPosition(m_currentEmitter, &pos);
-            break;
-        }
-        case Qt::Key_Up: {
-            MAGIC_POSITION pos;
-            Magic_GetEmitterPosition(m_currentEmitter, &pos);
-            pos.y += 1;
-            Magic_SetEmitterPosition(m_currentEmitter, &pos);
-            break;
-        }
-        }
-    }
-
-    m_currentEmitter = -1;
 }
 
 void MainWidget::refreshUI()

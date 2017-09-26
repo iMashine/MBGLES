@@ -206,7 +206,9 @@ void EmitterList::selectItem(QModelIndex index)
             Q_ASSERT(MAGIC_SUCCESS == Magic_SetBBoxPeriod(m_list.at(m_select.row())->GetId(), 1));
         }
         else {
-            m_list.at(m_select.row())->SetState(MAGIC_STATE_STOP);
+            for (int i = 0; i < m_list.count(); i++) {
+                m_list.at(i)->SetState(MAGIC_STATE_STOP);
+            }
             m_select = index;
             m_list.at(m_select.row())->SetState(MAGIC_STATE_UPDATE);
         }

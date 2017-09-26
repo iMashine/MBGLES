@@ -3,6 +3,7 @@
 
 #include "emitter.h"
 #include "emitterlist.h"
+#include "mainwidget.h"
 #include "shaderprogram.h"
 
 #include <QBasicTimer>
@@ -19,7 +20,7 @@
 class MainOpenGLWidget : protected QOpenGLWidget, protected QOpenGLFunctions
 {
 public:
-    MainOpenGLWidget(QObject *parent = Q_NULLPTR);
+    MainOpenGLWidget(MainWidget *parent = Q_NULLPTR);
     ~MainOpenGLWidget();
 
     EmitterList *GetEmitters();
@@ -48,6 +49,8 @@ protected:
     void timerEvent(QTimerEvent *e) override;
     void initializeMP();
 
+    void keyPressEvent(QKeyEvent *e);
+
 private:
     QBasicTimer timer;
     QMatrix4x4 m_projection;
@@ -57,7 +60,7 @@ private:
 
     ShaderProgram m_program;
     QOpenGLFunctions m_functions;
-    QObject *m_parent = Q_NULLPTR;
+    MainWidget *m_parent = Q_NULLPTR;
 
     QOpenGLPaintDevice *m_mainGLPaintDevice = nullptr;
     QPainter *m_painter = nullptr;

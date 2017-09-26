@@ -1,11 +1,12 @@
 #include "mainopenglwidget.h"
 #include "mainwidget.h"
 
-MainOpenGLWidget::MainOpenGLWidget(QObject *parent)
+MainOpenGLWidget::MainOpenGLWidget(MainWidget *parent)
 {
     m_emitters = new EmitterList(Q_NULLPTR);
     m_parent = parent;
     Emitter::m_widget = this;
+    setFocusPolicy(Qt::StrongFocus);
 }
 
 MainOpenGLWidget::~MainOpenGLWidget()
@@ -144,6 +145,43 @@ void MainOpenGLWidget::timerEvent(QTimerEvent *e)
     m_manager->UpdateByTimer();
 
     update();
+}
+
+void MainOpenGLWidget::keyPressEvent(QKeyEvent *e)
+{
+    if (m_parent->m_emittersList->selection() != Q_NULLPTR) {
+        m_parent->m_currentEmitter = m_parent->m_emittersList->selection()->GetId();
+        switch (e->key()) {
+        case Qt::Key_Left: {
+            MAGIC_POSITION pos;
+            Magic_GetEmitterPosition(m_parent->m_currentEmitter, &pos);
+            pos.x -= 1;
+            Magic_SetEmitterPosition(m_parent->m_currentEmitter, &pos);
+            break;
+        }
+        case Qt::Key_Right: {
+            MAGIC_POSITION pos;
+            Magic_GetEmitterPosition(m_parent->m_currentEmitter, &pos);
+            pos.x += 1;
+            Magic_SetEmitterPosition(m_parent->m_currentEmitter, &pos);
+            break;
+        }
+        case Qt::Key_Down: {
+            MAGIC_POSITION pos;
+            Magic_GetEmitterPosition(m_parent->m_currentEmitter, &pos);
+            pos.y -= 1;
+            Magic_SetEmitterPosition(m_parent->m_currentEmitter, &pos);
+            break;
+        }
+        case Qt::Key_Up: {
+            MAGIC_POSITION pos;
+            Magic_GetEmitterPosition(m_parent->m_currentEmitter, &pos);
+            pos.y += 1;
+            Magic_SetEmitterPosition(m_parent->m_currentEmitter, &pos);
+            break;
+        }
+        }
+    }
 }
 
 void MainOpenGLWidget::paintGL()
