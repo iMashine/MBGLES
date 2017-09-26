@@ -40,8 +40,6 @@ public:
 
     void mouseMoveEvent(QMouseEvent *event) override;
 
-    void keyPressEvent(QKeyEvent *event);
-
     MainOpenGLWidget *m_mainOpenGLWidget = nullptr;
 
     QGroupBox *m_mainMenu = nullptr;

@@ -212,11 +212,6 @@ void MainWidget::mouseMoveEvent(QMouseEvent *event)
     }
 }
 
-void MainWidget::keyPressEvent(QKeyEvent *event)
-{
-
-}
-
 void MainWidget::refreshUI()
 {
     if (m_emittersList->selection() != Q_NULLPTR) {
