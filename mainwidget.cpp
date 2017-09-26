@@ -193,7 +193,6 @@ void MainWidget::mousePressEvent(QMouseEvent *event)
                     m_currentEmitter = emitter->GetId();
                     break;
                 }
-//                qDebug() << emitter->GetEmitterName();
                 emitter = m_mainOpenGLWidget->GetEmitters()->next();
             }
             while (emitter != firstEmitter);
