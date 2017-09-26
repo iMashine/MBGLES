@@ -120,81 +120,6 @@ MainWidget::MainWidget(QWidget *parent)
         m_mainMenuLayout->addWidget(weightSetting);
     }
 
-    /// меню настройки цвета частиц
-    {
-        m_currentColorPushButton = new QPushButton("Пользовательский цвет");
-
-        connect(m_currentColorPushButton, &QPushButton::clicked, [ = ]() {
-            QColor newColor = QColorDialog::getColor();
-            m_currentColorPushButton->setStyleSheet("background-color: " + newColor.name());
-            if (m_emittersList->selection() != Q_NULLPTR) {
-                int color;
-                color = newColor.alpha();
-                color = (color << 8) + newColor.blue();
-                color = (color << 8) + newColor.green();
-                color = (color << 8) + newColor.red();
-                m_emittersList->selection()->SetParticlesColor(color);
-            }
-        });
-
-        QPushButton *toDefaultColorButton = new QPushButton("Исходный цвет");
-
-        connect(toDefaultColorButton, &QPushButton::clicked, [ = ]() {
-            if (m_emittersList->selection() != Q_NULLPTR) {
-                m_emittersList->selection()->SetDefaultParticleColor();
-            }
-        });
-
-        QHBoxLayout *settingsColorLayout = new QHBoxLayout();
-        settingsColorLayout->addWidget(m_currentColorPushButton);
-        settingsColorLayout->addWidget(toDefaultColorButton);
-
-        QGroupBox *ColorSetting = new QGroupBox("Цвет");
-        ColorSetting->setLayout(settingsColorLayout);
-
-        m_mainMenuLayout->addWidget(ColorSetting);
-    }
-
-    /// меню настройки картинки частиц
-    {
-        QPushButton *currentImageButton = new QPushButton("Картинка");
-
-        connect(currentImageButton, &QPushButton::clicked, [ = ]() {
-            if (m_emittersList->selection() != Q_NULLPTR) {
-                m_emittersList->selection()->SetDefaultParticleColor();
-            }
-        });
-
-        QVBoxLayout *settingsImageLayout = new QVBoxLayout();
-
-        settingsImageLayout->addWidget(currentImageButton);
-
-        QGroupBox *ImageSetting = new QGroupBox("Картинка");
-        ImageSetting->setLayout(settingsImageLayout);
-
-        m_mainMenuLayout->addWidget(ImageSetting);
-    }
-
-//    /// меню настройки режима заполнения частиц
-//    {
-//        QComboBox *fillTypeComboBox = new QComboBox();
-//        fillTypeComboBox->addItem("Заполнение цветом");
-//        fillTypeComboBox->addItem("Заполнение картинкой");
-//        fillTypeComboBox->addItem("Смешать");
-
-//        QPushButton *applyfillTypeButton = new QPushButton("Применить");
-
-//        QVBoxLayout *settingsfillTypeLayout = new QVBoxLayout();
-
-//        settingsfillTypeLayout->addWidget(fillTypeComboBox);
-//        settingsfillTypeLayout->addWidget(applyfillTypeButton);
-
-//        QGroupBox *fillTypeSetting = new QGroupBox("Режим заполнения");
-//        fillTypeSetting->setLayout(settingsfillTypeLayout);
-
-//        m_mainMenuLayout->addWidget(fillTypeSetting);
-//    }
-
     /// меню работы с эмиттерами
     {
         QPushButton *addEmitterButton = new QPushButton("Добавить");
@@ -340,15 +265,6 @@ void MainWidget::refreshUI()
         m_particlesSaturationSettingSlider->setValue(m_emittersList->selection()->GetParticlesSaturation());
         m_particlesLifeSettingSlider->setValue(m_emittersList->selection()->GetParticlesLife());
         m_particlesWeightSettingSlider->setValue(m_emittersList->selection()->GetParticlesWeight());
-
-        int color = m_emittersList->selection()->GetParticlesColor();
-
-        int colorAlpha = (color >> 24) & 0xFF;
-        int colorBlue = (color >> 16) & 0xFF;
-        int colorGreen = (color >> 8) & 0xFF;
-        int colorRed = color & 0xFF;
-
-        m_currentColorPushButton->setStyleSheet("background-color: " + QColor(colorRed, colorGreen, colorBlue, colorAlpha).name());
     }
     m_currentEmitter = -1;
 }

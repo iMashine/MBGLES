@@ -74,9 +74,6 @@ private:
 
     // вес
     QSlider *m_particlesWeightSettingSlider;
-
-    // цвет
-    QPushButton *m_currentColorPushButton;
 };
 
 #endif // MAINWIDGET_H

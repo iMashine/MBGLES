@@ -459,39 +459,6 @@ unsigned int Emitter::GetParticlesWeight()
     return this->GetParticleParameter(MAGIC_DIAGRAM_WEIGHT);
 }
 
-int Emitter::GetParticlesColor()
-{
-    Q_ASSERT_X(MAGIC_SUCCESS == Magic_SetColorMode(m_id, MAGIC_COLOR_TINT), "Magic_SetColorMode", "Can't set color mode on user color");
-    return Magic_GetTint(m_id);
-}
-
-void Emitter::SetParticlesColor(int color)
-{
-    Q_ASSERT(MAGIC_SUCCESS == Magic_SetColorMode(m_id, MAGIC_COLOR_TINT));
-    Q_ASSERT(MAGIC_SUCCESS == Magic_SetTint(m_id, color));
-}
-
-void Emitter::SetDefaultParticleColor()
-{
-    Q_ASSERT(MAGIC_SUCCESS == Magic_SetColorMode(m_id, MAGIC_COLOR_STANDARD));
-}
-
-void Emitter::SetTextureImage(QImage image)
-{
-    m_textureImage = QImage(image);
-
-    if (m_texture)
-        m_texture->destroy();
-    m_texture = new QOpenGLTexture(QOpenGLTexture::Target2D);
-    m_texture->setMinMagFilters(QOpenGLTexture::Linear, QOpenGLTexture::Linear);
-    m_texture->setData(m_textureImage);
-}
-
-QImage Emitter::getTextureImage()
-{
-    return m_textureImage;
-}
-
 void Emitter::BindTexture()
 {
     if (m_texture)
@@ -500,33 +467,22 @@ void Emitter::BindTexture()
 
 unsigned int Emitter::GetParticleParameter(MAGIC_DIAGRAM_ENUM parameter)
 {
-    Magic_UnlockParticlesType();
     float Factor = 0;
-    if (int count = Magic_GetParticlesTypeCount(m_id)) {
-        for (int i = 0; i < count; i++) {
-            if (MAGIC_SUCCESS == Magic_LockParticlesType(m_id, i)) {
-                if (Magic_IsDiagramEnabled(m_id, i, parameter)) {
-                    Factor += Magic_GetDiagramFactor(m_id, i, parameter);
-                    Magic_UnlockParticlesType();
-                }
-            }
+    if (Magic_GetParticlesTypeCount(m_id)) {
+        if (Magic_LockParticlesType(m_id, 0)) {
+            Factor += Magic_GetDiagramFactor(m_id, 0, parameter);
+            Magic_UnlockParticlesType();
+            return (unsigned int)(Factor * 10);
         }
-        Factor /= count;
     }
-    return (unsigned int)(Factor * 10);
 }
 
 void Emitter::SetParticlesParameter(MAGIC_DIAGRAM_ENUM parameter, unsigned int value)
 {
-    Magic_UnlockParticlesType();
-    if (int count = Magic_GetParticlesTypeCount(m_id)) {
-        for (int i = 0; i < count; i++) {
-            if (MAGIC_SUCCESS == Magic_LockParticlesType(m_id, i)) {
-                if (Magic_IsDiagramEnabled(m_id, i, parameter)) {
-                    Magic_SetDiagramFactor(m_id, i, parameter, ((float)(value) / 10));
-                }
-                Magic_UnlockParticlesType();
-            }
+    if (Magic_GetParticlesTypeCount(m_id)) {
+        if (Magic_LockParticlesType(m_id, 0)) {
+            Magic_SetDiagramFactor(m_id, 0, parameter, ((float)(value) / 10));
+            Magic_UnlockParticlesType();
         }
     }
 }

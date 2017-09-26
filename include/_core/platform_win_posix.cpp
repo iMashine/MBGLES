@@ -49,7 +49,6 @@ const char *MP_Platform_WIN_POSIX::GetPathToPTC()
         ptc_path += "particles2d";
         ptc_path += '/';
     }
-
     return ptc_path.c_str();
 }
 

@@ -101,16 +101,6 @@ public:
 
     unsigned int GetParticlesWeight();
 
-    int GetParticlesColor();
-
-    void SetParticlesColor(int color);
-
-    void SetDefaultParticleColor();
-
-    void SetTextureImage(QImage image);
-
-    QImage getTextureImage();
-
     void BindTexture();
 
     unsigned int GetParticleParameter(MAGIC_DIAGRAM_ENUM parameter);
@@ -133,8 +123,6 @@ public:
 
 private:
     ParticleFillType m_currentParticleFillType;
-
-    QImage m_textureImage;
 
     QOpenGLTexture *m_texture;
 };
