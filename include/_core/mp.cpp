@@ -9,7 +9,7 @@
 #include <errno.h>
 #include <QFile>
 
-#include "emitter.h"
+#include "mpemitter.h"
 
 // ------------------------------------------------------------------------------------------
 
@@ -185,7 +185,7 @@ MP_Manager::MP_Manager()
 
     k_emitter = 0;
     max_emitter = 10;
-    m_emitter = new Emitter*[max_emitter];
+    m_emitter = new MPEmitter*[max_emitter];
     m_descriptor = new int[max_emitter];
     for (int i = 0; i < max_emitter; i++) {
         m_emitter[i] = NULL;
@@ -351,7 +351,7 @@ HM_EMITTER MP_Manager::GetNextEmitter(HM_EMITTER hmEmitter)
 
 // eng: Returning the emitter by its descriptor
 // rus: Возвращение эмиттера по дескриптору
-Emitter *MP_Manager::GetEmitter(HM_EMITTER hmEmitter)
+MPEmitter *MP_Manager::GetEmitter(HM_EMITTER hmEmitter)
 {
     if (hmEmitter >= 0 && hmEmitter < max_emitter)
         return m_emitter[hmEmitter];
@@ -360,11 +360,11 @@ Emitter *MP_Manager::GetEmitter(HM_EMITTER hmEmitter)
 
 // eng: Returning the emitter by name
 // rus: Возвращание эмиттера по имени
-Emitter *MP_Manager::GetEmitterByName(const char *name)
+MPEmitter *MP_Manager::GetEmitterByName(const char *name)
 {
     HM_EMITTER hmEmitter = GetFirstEmitter();
     while (hmEmitter) {
-        Emitter *emitter = GetEmitter(hmEmitter);
+        MPEmitter *emitter = GetEmitter(hmEmitter);
         const char *emitter_name = emitter->GetEmitterName().toLatin1().data();
         if (!strcmp(name, emitter_name)) {
             // eng: name coincides
@@ -521,7 +521,7 @@ void MP_Manager::Update(double time)
     HM_EMITTER hmEmitter = GetFirstEmitter();
 
     while (hmEmitter) {
-        Emitter *emitter = GetEmitter(hmEmitter);
+        MPEmitter *emitter = GetEmitter(hmEmitter);
         int state = emitter->GetState();
         if (state == MAGIC_STATE_UPDATE || state == MAGIC_STATE_INTERRUPT) {
             emitter->Update(time);
@@ -549,7 +549,7 @@ int MP_Manager::Render()
     HM_EMITTER hmEmitter = GetFirstEmitter();
 
     while (hmEmitter) {
-        Emitter *emitter = GetEmitter(hmEmitter);
+        MPEmitter *emitter = GetEmitter(hmEmitter);
 //        QPointF pos = QPointF(device->window_width / 2,
 //                              device->window_height / 2);
         emitter->SetScale(1);
@@ -568,7 +568,7 @@ void MP_Manager::Stop()
     HM_EMITTER hmEmitter = GetFirstEmitter();
 
     while (hmEmitter) {
-        Emitter *emitter = GetEmitter(hmEmitter);
+        MPEmitter *emitter = GetEmitter(hmEmitter);
         emitter->SetState(MAGIC_STATE_STOP);
         hmEmitter = GetNextEmitter(hmEmitter);
     }
@@ -597,11 +597,11 @@ void MP_Manager::LoadFolder(HM_FILE file, const char *path)
 
 // eng: Loading emitter
 // rus: Загрузка конкретного эмиттера
-Emitter *MP_Manager::LoadEmitter(HM_FILE file, const char *path)
+MPEmitter *MP_Manager::LoadEmitter(HM_FILE file, const char *path)
 {
     // eng: it is necessary to load emitter from file
     // rus: нужно извлечь эмиттер из файла
-    Emitter *em = NULL;
+    MPEmitter *em = NULL;
     HM_EMITTER emitter = Magic_LoadEmitter(file, path);
     if (emitter) {
         em = device->NewEmitter(emitter, this);
@@ -641,7 +641,7 @@ Emitter *MP_Manager::LoadEmitter(HM_FILE file, const char *path)
 
 // eng: Adding new emitter into array
 // rus: Добавление нового эмиттера в массив
-void MP_Manager::AddEmitter(Emitter *emitter)
+void MP_Manager::AddEmitter(MPEmitter *emitter)
 {
     int i;
 
@@ -653,7 +653,7 @@ void MP_Manager::AddEmitter(Emitter *emitter)
     while (index >= max_emitter) {
         int new_max_emitter = max_emitter + 10;
 
-        Emitter **vm_emitter = new Emitter*[new_max_emitter];
+        MPEmitter **vm_emitter = new MPEmitter*[new_max_emitter];
         for (i = 0; i < max_emitter; i++)
             vm_emitter[i] = m_emitter[i];
         delete []m_emitter;
@@ -698,7 +698,7 @@ void MP_Manager::RefreshAtlas()
 
             HM_EMITTER hmEmitter = GetFirstEmitter();
             while (hmEmitter) {
-                Emitter *emitter = GetEmitter(hmEmitter);
+                MPEmitter *emitter = GetEmitter(hmEmitter);
                 if (!emitter->is_atlas) {
                     emitter->is_atlas = true;
                     hm_emitter[k] = hmEmitter;
@@ -1129,9 +1129,9 @@ MP_Atlas *MP_Device::NewAtlas(int width, int height, const char *file)
 
 // eng: Creating of emitter object
 // rus: Создание объекта эмиттера
-Emitter *MP_Device::NewEmitter(HM_EMITTER emitter, MP_Manager *manager)
+MPEmitter *MP_Device::NewEmitter(HM_EMITTER emitter, MP_Manager *manager)
 {
-    return new Emitter(emitter, manager);
+    return new MPEmitter(emitter, manager);
 }
 
 // eng: Creating of material

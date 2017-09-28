@@ -19,13 +19,13 @@
 #include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLTexture>
-#include <shaderprogram.h>
-#include "ptextures.h"
+#include "src/shaderprogram.h"
+#include "src/ptextures.h"
 #include <QFile>
 #include <string>
 #include "magic.h"
 
-class Emitter;
+class MPEmitter;
 class MP_Manager;
 class MP_Atlas;
 class MP_Device;
@@ -136,7 +136,7 @@ protected:
 
     // eng: list of loaded emitters
     // rus: список загруженных эмиттеров
-    Emitter **m_emitter;
+    MPEmitter **m_emitter;
     HM_EMITTER *m_descriptor;
 
     // eng: number of loaded atlases
@@ -213,11 +213,11 @@ public:
 
     // eng: Returning the emitter by its descriptor
     // rus: Возвращение эмиттера по дескриптору
-    Emitter *GetEmitter(HM_EMITTER hmEmitter);
+    MPEmitter *GetEmitter(HM_EMITTER hmEmitter);
 
     // eng: Returning the emitter by name
     // rus: Возвращание эмиттера по имени
-    Emitter *GetEmitterByName(const char *name);
+    MPEmitter *GetEmitterByName(const char *name);
 
     // eng: Loading all emitters from emitters folder
     // rus: Загрузка всех эмиттеров из всех файлов
@@ -285,11 +285,11 @@ public:
 
     // eng: Adding new emitter into array
     // rus: Добавление нового эмиттера в массив
-    void AddEmitter(Emitter *emitter);
+    void AddEmitter(MPEmitter *emitter);
 
     // eng: Loading emitter
     // rus: Загрузка конкретного эмиттера
-    Emitter *LoadEmitter(HM_FILE file, const char *path);
+    MPEmitter *LoadEmitter(HM_FILE file, const char *path);
 
     // eng: Loading folder
     // rus: Загрузка папки
@@ -490,7 +490,7 @@ public:
 
     // eng: Creating of emitter object
     // rus: Создание объекта эмиттера
-    virtual Emitter *NewEmitter(HM_EMITTER emitter, MP_Manager *manager);
+    virtual MPEmitter *NewEmitter(HM_EMITTER emitter, MP_Manager *manager);
 
     // eng: Creating of material
     // rus: Создание материала
