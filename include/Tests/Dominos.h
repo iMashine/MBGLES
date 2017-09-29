@@ -23,8 +23,10 @@ class Dominos : public B2Emitter
 {
 public:
 
-    Dominos()
+    Dominos(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         b2Body *b1;
         {
             b2EdgeShape shape;

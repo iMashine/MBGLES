@@ -23,8 +23,10 @@ class ShapeEditing : public B2Emitter
 {
 public:
 
-    ShapeEditing()
+    ShapeEditing(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         {
             b2BodyDef bd;
             b2Body *ground = m_world->CreateBody(&bd);

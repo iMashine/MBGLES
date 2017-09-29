@@ -27,8 +27,10 @@ public:
         e_depth = 4
     };
 
-    MobileBalanced()
+    MobileBalanced(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         b2Body *ground;
 
         // Create ground body.

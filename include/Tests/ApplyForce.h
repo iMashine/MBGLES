@@ -22,8 +22,10 @@
 class ApplyForce : public B2Emitter
 {
 public:
-    ApplyForce()
+    ApplyForce(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         m_world->SetGravity(b2Vec2(0.0f, 0.0f));
 
         const float32 k_restitution = 0.4f;

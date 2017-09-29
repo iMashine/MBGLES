@@ -23,8 +23,10 @@
 class Car : public B2Emitter
 {
 public:
-    Car()
+    Car(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         m_hz = 4.0f;
         m_zeta = 0.7f;
         m_speed = 50.0f;

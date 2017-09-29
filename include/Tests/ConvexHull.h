@@ -26,8 +26,10 @@ public:
         e_count = b2_maxPolygonVertices
     };
 
-    ConvexHull()
+    ConvexHull(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         Generate();
         m_auto = false;
     }

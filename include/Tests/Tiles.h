@@ -19,6 +19,8 @@
 #ifndef TILES_H
 #define TILES_H
 
+#include "../../src/emitter/b2emitter.h"
+
 /// This stress tests the dynamic tree broad-phase. This also shows that tile
 /// based collision is _not_ smooth due to Box2D not knowing about adjacency.
 class Tiles : public B2Emitter
@@ -28,8 +30,10 @@ public:
         e_count = 20
     };
 
-    Tiles()
+    Tiles(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         m_fixtureCount = 0;
         b2Timer timer;
 

@@ -26,8 +26,10 @@
 class CollisionProcessing : public B2Emitter
 {
 public:
-    CollisionProcessing()
+    CollisionProcessing(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         // Ground body
         {
             b2EdgeShape shape;

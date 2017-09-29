@@ -10,6 +10,11 @@ void DestructionListener::SayGoodbye(b2Joint *joint)
     }
 }
 
+B2Emitter::B2Emitter()
+{
+    m_id = 0;
+}
+
 B2Emitter::B2Emitter(uint id, QString name)
 {
     b2Vec2 gravity;

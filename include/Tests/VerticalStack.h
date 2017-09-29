@@ -26,14 +26,16 @@ class VerticalStack : public B2Emitter
 public:
 
     enum {
-        e_columnCount = 1,
+        e_columnCount = 8,
         e_rowCount = 15
                      //e_columnCount = 1,
                      //e_rowCount = 1
     };
 
-    VerticalStack()
+    VerticalStack(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         {
             b2BodyDef bd;
             b2Body *ground = m_world->CreateBody(&bd);

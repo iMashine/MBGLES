@@ -22,8 +22,10 @@
 class Pulleys : public B2Emitter
 {
 public:
-    Pulleys()
+    Pulleys(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         float32 y = 16.0f;
         float32 L = 12.0f;
         float32 a = 1.0f;

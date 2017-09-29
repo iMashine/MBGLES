@@ -27,8 +27,7 @@
 class CharacterCollision : public B2Emitter
 {
 public:
-    CharacterCollision(uint id, QString name)
-        : B2Emitter(id, name)
+    CharacterCollision(uint id, QString name) :  B2Emitter(id, name)
     {
         // Ground body
         {

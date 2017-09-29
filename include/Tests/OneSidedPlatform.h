@@ -29,8 +29,10 @@ public:
         e_below
     };
 
-    OneSidedPlatform()
+    OneSidedPlatform(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         // Ground
         {
             b2BodyDef bd;

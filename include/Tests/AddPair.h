@@ -23,8 +23,11 @@ class AddPair : public B2Emitter
 {
 public:
 
-    AddPair()
+    AddPair(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
+
         m_world->SetGravity(b2Vec2(0.0f, 0.0f));
         {
             b2CircleShape shape;

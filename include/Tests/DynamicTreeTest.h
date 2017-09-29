@@ -27,8 +27,10 @@ public:
         e_actorCount = 128
     };
 
-    DynamicTreeTest()
+    DynamicTreeTest(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         m_worldExtent = 15.0f;
         m_proxyExtent = 0.5f;
 

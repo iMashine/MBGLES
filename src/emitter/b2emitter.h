@@ -187,6 +187,16 @@ public:
 
     uint GetParticlesSaturation() {  }
 
+    void SetId(uint id)
+    {
+        this->m_id = id;
+    }
+
+    void SetName(QString name)
+    {
+        m_name = name;
+    }
+
 protected:
     friend class DestructionListener;
     friend class BoundaryListener;

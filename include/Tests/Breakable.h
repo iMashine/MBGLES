@@ -28,8 +28,10 @@ public:
         e_count = 7
     };
 
-    Breakable()
+    Breakable(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         // Ground body
         {
             b2BodyDef bd;

@@ -114,8 +114,10 @@ public:
         m_world->CreateJoint(&rjd);
     }
 
-    TheoJansen()
+    TheoJansen(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         m_offset.Set(0.0f, 8.0f);
         m_motorSpeed = 2.0f;
         m_motorOn = true;

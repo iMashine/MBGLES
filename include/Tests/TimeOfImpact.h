@@ -22,8 +22,10 @@
 class TimeOfImpact : public B2Emitter
 {
 public:
-    TimeOfImpact()
+    TimeOfImpact(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         m_shapeA.SetAsBox(25.0f, 5.0f);
         m_shapeB.SetAsBox(2.5f, 2.5f);
     }

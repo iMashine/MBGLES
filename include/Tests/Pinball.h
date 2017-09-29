@@ -24,8 +24,10 @@
 class Pinball : public B2Emitter
 {
 public:
-    Pinball()
+    Pinball(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         // Ground body
         b2Body *ground = NULL;
         {

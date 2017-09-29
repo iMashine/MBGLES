@@ -40,8 +40,10 @@ const uint16 k_circleMask = 0xFFFF;
 class CollisionFiltering : public B2Emitter
 {
 public:
-    CollisionFiltering()
+    CollisionFiltering(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         // Ground body
         {
             b2EdgeShape shape;

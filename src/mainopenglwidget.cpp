@@ -151,78 +151,16 @@ void MainOpenGLWidget::initializeMP()
 
     uint AvailableId = GetId();
 
-    B2Emitter *emitter = new CharacterCollision(AvailableId, "Character Collision");
-//    emitter = CharacterCollision::Create();
-    m_emitters->add(emitter);
-
-//    delete test;
-//    testSelection = newIndex;
-//    test = g_testEntries[testIndex].createFcn();
-//    test->g_debugDraw = g_debugDraw;
-//    test->m_painter = m_painter;
-
-//    g_testEntries = {
-//        {AvailableId++, "Character Collision", CharacterCollision::Create},
-//        {AvailableId++, "Tiles", Tiles::Create},
-//        {AvailableId++, "Heavy on Light", HeavyOnLight::Create},
-//        {AvailableId++, "Heavy on Light Two", HeavyOnLightTwo::Create},
-//        {AvailableId++, "Vertical Stack", VerticalStack::Create},
-//        {AvailableId++, "Basic Slider Crank", BasicSliderCrank::Create},
-//        {AvailableId++, "Slider Crank", SliderCrank::Create},
-//        {AvailableId++, "Sphere Stack", SphereStack::Create},
-//        {AvailableId++, "Convex Hull", ConvexHull::Create},
-//        {AvailableId++, "Tumbler", Tumbler::Create},
-//        {AvailableId++, "Ray-Cast", RayCast::Create},
-//        {AvailableId++, "Dump Shell", DumpShell::Create},
-//        {AvailableId++, "Apply Force", ApplyForce::Create},
-//        {AvailableId++, "Continuous Test", ContinuousTest::Create},
-//        {AvailableId++, "Time of Impact", TimeOfImpact::Create},
-//        {AvailableId++, "Motor Joint", MotorJoint::Create},
-//        {AvailableId++, "One-Sided Platform", OneSidedPlatform::Create},
-//        {AvailableId++, "Mobile", Mobile::Create},
-//        {AvailableId++, "MobileBalanced", MobileBalanced::Create},
-//        {AvailableId++, "Conveyor Belt", ConveyorBelt::Create},
-//        {AvailableId++, "Gears", Gears::Create},
-//        {AvailableId++, "Varying Restitution", VaryingRestitution::Create},
-//        {AvailableId++, "Cantilever", Cantilever::Create},
-//        {AvailableId++, "Edge Test", EdgeTest::Create},
-//        {AvailableId++, "Body Types", BodyTypes::Create},
-//        {AvailableId++, "Shape Editing", ShapeEditing::Create},
-//        {AvailableId++, "Car", Car::Create},
-//        {AvailableId++, "Prismatic", Prismatic::Create},
-//        {AvailableId++, "Revolute", Revolute::Create},
-//        {AvailableId++, "Pulleys", Pulleys::Create},
-//        {AvailableId++, "Polygon Shapes", PolyShapes::Create},
-//        {AvailableId++, "Web", Web::Create},
-//        {AvailableId++, "RopeJoint", RopeJoint::Create},
-//        {AvailableId++, "Pinball", Pinball::Create},
-//        {AvailableId++, "Bullet Test", BulletTest::Create},
-//        {AvailableId++, "Confined", Confined::Create},
-//        {AvailableId++, "Pyramid", Pyramid::Create},
-//        {AvailableId++, "Theo Jansen's Walker", TheoJansen::Create},
-//        {AvailableId++, "Edge Shapes", EdgeShapes::Create},
-//        {AvailableId++, "PolyCollision", PolyCollision::Create},
-//        {AvailableId++, "Bridge", Bridge::Create},
-//        {AvailableId++, "Breakable", Breakable::Create},
-//        {AvailableId++, "Chain", Chain::Create},
-//        {AvailableId++, "Collision Filtering", CollisionFiltering::Create},
-//        {AvailableId++, "Collision Processing", CollisionProcessing::Create},
-//        {AvailableId++, "Compound Shapes", CompoundShapes::Create},
-//        {AvailableId++, "Distance Test", DistanceTest::Create},
-//        {AvailableId++, "Dominos", Dominos::Create},
-//        {AvailableId++, "Dynamic Tree", DynamicTreeTest::Create},
-//        {AvailableId++, "Sensor Test", SensorTest::Create},
-//        {AvailableId++, "Varying Friction", VaryingFriction::Create},
-//        {AvailableId++, "Add Pair Stress Test", AddPair::Create}
-//    };
-
-//    for (int i = 0; i < g_testEntries.count(); i++) {
-//        B2Emitter *emitter = g_testEntries[i].createFcn();
-//        emitter->m_id = g_testEntries[i].id;
-//        emitter->m_name = g_testEntries[i].name;
-//        m_emitters->add(emitter);
-//    }
-
+    B2Emitter *emitter = new CharacterCollision(AvailableId, "Character Collision"); m_emitters->add(emitter);
+    emitter = new Tiles(AvailableId++, "Tiles"); m_emitters->add(emitter);
+    emitter = new VerticalStack(AvailableId++, "Vertical Stack"); m_emitters->add(emitter);
+    emitter = new SphereStack(AvailableId++, "Sphere Stack"); m_emitters->add(emitter);
+    emitter = new Tumbler(AvailableId++, "Tumbler"); m_emitters->add(emitter);
+    emitter = new VaryingRestitution(AvailableId++, "Varying Restitution"); m_emitters->add(emitter);
+    emitter = new Pyramid(AvailableId++, "Pyramid"); m_emitters->add(emitter);
+    emitter = new CollisionFiltering(AvailableId++, "Collision Filtering"); m_emitters->add(emitter);
+    emitter = new CollisionProcessing(AvailableId++, "Collision Processing"); m_emitters->add(emitter);
+    emitter = new CompoundShapes(AvailableId++, "Compound Shapes"); m_emitters->add(emitter);
     MainWidget *widget = (MainWidget *)m_parent;
     widget->m_emittersList->setCurrentItemIndex(m_emitters->selectItem());
 }

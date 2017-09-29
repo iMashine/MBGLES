@@ -23,8 +23,10 @@ class ContinuousTest : public B2Emitter
 {
 public:
 
-    ContinuousTest()
+    ContinuousTest(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         {
             b2BodyDef bd;
             bd.position.Set(0.0f, 0.0f);

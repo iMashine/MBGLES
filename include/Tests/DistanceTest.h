@@ -22,8 +22,10 @@
 class DistanceTest : public B2Emitter
 {
 public:
-    DistanceTest()
+    DistanceTest(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         {
             m_transformA.SetIdentity();
             m_transformA.p.Set(0.0f, -0.2f);

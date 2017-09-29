@@ -12,212 +12,209 @@ Test case for collision/jerking issue.
 class Skier : public B2Emitter
 {
 public:
-	Skier()
-	{		
-		b2Body* ground = NULL;
-		{
-			b2BodyDef bd;
-			ground = m_world->CreateBody(&bd);
+    Skier(uint id, QString name) :  B2Emitter(id, name)
+    {
+        m_id = id;
+        m_name = name;
+        b2Body *ground = NULL;
+        {
+            b2BodyDef bd;
+            ground = m_world->CreateBody(&bd);
 
-			float const PlatformWidth = 8.0f;
+            float const PlatformWidth = 8.0f;
 
-			/*
-			First angle is from the horizontal and should be negative for a downward slope.
-			Second angle is relative to the preceding slope, and should be positive, creating a kind of
-			loose 'Z'-shape from the 3 edges.
-			If A1 = -10, then A2 <= ~1.5 will result in the collision glitch.
-			If A1 = -30, then A2 <= ~10.0 will result in the glitch.
-			*/
-			float const Angle1Degrees = -30.0f;
-			float const Angle2Degrees = 10.0f;
-			
-			/*
-			The larger the value of SlopeLength, the less likely the glitch will show up.
-			*/
-			float const SlopeLength = 2.0f;
+            /*
+            First angle is from the horizontal and should be negative for a downward slope.
+            Second angle is relative to the preceding slope, and should be positive, creating a kind of
+            loose 'Z'-shape from the 3 edges.
+            If A1 = -10, then A2 <= ~1.5 will result in the collision glitch.
+            If A1 = -30, then A2 <= ~10.0 will result in the glitch.
+            */
+            float const Angle1Degrees = -30.0f;
+            float const Angle2Degrees = 10.0f;
 
-			float const SurfaceFriction = 0.2f;
+            /*
+            The larger the value of SlopeLength, the less likely the glitch will show up.
+            */
+            float const SlopeLength = 2.0f;
 
-			// Convert to radians
-			float const Slope1Incline = -Angle1Degrees * b2_pi / 180.0f;
-			float const Slope2Incline = Slope1Incline - Angle2Degrees * b2_pi / 180.0f;
-			//
+            float const SurfaceFriction = 0.2f;
 
-			m_platform_width = PlatformWidth;
+            // Convert to radians
+            float const Slope1Incline = -Angle1Degrees * b2_pi / 180.0f;
+            float const Slope2Incline = Slope1Incline - Angle2Degrees * b2_pi / 180.0f;
+            //
 
-			std::vector< b2Vec2 > verts;
+            m_platform_width = PlatformWidth;
 
-			// Horizontal platform
-			verts.emplace_back(-PlatformWidth, 0.0f);
-			verts.emplace_back(0.0f, 0.0f);
+            std::vector< b2Vec2 > verts;
 
-			// Slope
-			verts.emplace_back(
-				verts.back().x + SlopeLength * cosf(Slope1Incline),
-				verts.back().y - SlopeLength * sinf(Slope1Incline)
-				);
+            // Horizontal platform
+            verts.emplace_back(-PlatformWidth, 0.0f);
+            verts.emplace_back(0.0f, 0.0f);
 
-			verts.emplace_back(
-				verts.back().x + SlopeLength * cosf(Slope2Incline),
-				verts.back().y - SlopeLength * sinf(Slope2Incline)
-				);
+            // Slope
+            verts.emplace_back(
+                verts.back().x + SlopeLength * cosf(Slope1Incline),
+                verts.back().y - SlopeLength * sinf(Slope1Incline)
+            );
 
-			{
-				b2EdgeShape shape;
-				shape.Set(verts[0], verts[1]);
-				shape.m_hasVertex3 = true;
-				shape.m_vertex3 = verts[2];
+            verts.emplace_back(
+                verts.back().x + SlopeLength * cosf(Slope2Incline),
+                verts.back().y - SlopeLength * sinf(Slope2Incline)
+            );
 
-				b2FixtureDef fd;
-				fd.shape = &shape;
-				fd.density = 0.0f;
-				fd.friction = SurfaceFriction;
+            {
+                b2EdgeShape shape;
+                shape.Set(verts[0], verts[1]);
+                shape.m_hasVertex3 = true;
+                shape.m_vertex3 = verts[2];
 
-				ground->CreateFixture(&fd);
-			}
+                b2FixtureDef fd;
+                fd.shape = &shape;
+                fd.density = 0.0f;
+                fd.friction = SurfaceFriction;
 
-			{
-				b2EdgeShape shape;
-				shape.Set(verts[1], verts[2]);
-				shape.m_hasVertex0 = true;
-				shape.m_hasVertex3 = true;
-				shape.m_vertex0 = verts[0];
-				shape.m_vertex3 = verts[3];
+                ground->CreateFixture(&fd);
+            }
 
-				b2FixtureDef fd;
-				fd.shape = &shape;
-				fd.density = 0.0f;
-				fd.friction = SurfaceFriction;
+            {
+                b2EdgeShape shape;
+                shape.Set(verts[1], verts[2]);
+                shape.m_hasVertex0 = true;
+                shape.m_hasVertex3 = true;
+                shape.m_vertex0 = verts[0];
+                shape.m_vertex3 = verts[3];
 
-				ground->CreateFixture(&fd);
-			}
-			
-			{
-				b2EdgeShape shape;
-				shape.Set(verts[2], verts[3]);
-				shape.m_hasVertex0 = true;
-				shape.m_vertex0 = verts[1];
+                b2FixtureDef fd;
+                fd.shape = &shape;
+                fd.density = 0.0f;
+                fd.friction = SurfaceFriction;
 
-				b2FixtureDef fd;
-				fd.shape = &shape;
-				fd.density = 0.0f;
-				fd.friction = SurfaceFriction;
+                ground->CreateFixture(&fd);
+            }
 
-				ground->CreateFixture(&fd);
-			}
-		}
+            {
+                b2EdgeShape shape;
+                shape.Set(verts[2], verts[3]);
+                shape.m_hasVertex0 = true;
+                shape.m_vertex0 = verts[1];
 
-		{
-			bool const EnableCircularSkiTips = false;
+                b2FixtureDef fd;
+                fd.shape = &shape;
+                fd.density = 0.0f;
+                fd.friction = SurfaceFriction;
 
-			float const BodyWidth = 1.0f;
-			float const BodyHeight = 2.5f;
-			float const SkiLength = 3.0f;
+                ground->CreateFixture(&fd);
+            }
+        }
 
-			/*
-			Larger values for this seem to alleviate the issue to some extent.
-			*/
-			float const SkiThickness = 0.3f;
+        {
+            bool const EnableCircularSkiTips = false;
 
-			float const SkiFriction = 0.0f;
-			float const SkiRestitution = 0.15f;
+            float const BodyWidth = 1.0f;
+            float const BodyHeight = 2.5f;
+            float const SkiLength = 3.0f;
 
-			b2BodyDef bd;
-			bd.type = b2_dynamicBody;
+            /*
+            Larger values for this seem to alleviate the issue to some extent.
+            */
+            float const SkiThickness = 0.3f;
 
-			float initial_y = BodyHeight / 2 + SkiThickness;
-			if(EnableCircularSkiTips)
-			{
-				initial_y += SkiThickness / 6;
-			}
-			bd.position.Set(-m_platform_width / 2, initial_y);
+            float const SkiFriction = 0.0f;
+            float const SkiRestitution = 0.15f;
 
-			b2Body* skier = m_world->CreateBody(&bd);
+            b2BodyDef bd;
+            bd.type = b2_dynamicBody;
 
-			b2PolygonShape body;
-			body.SetAsBox(BodyWidth / 2, BodyHeight / 2);
+            float initial_y = BodyHeight / 2 + SkiThickness;
+            if (EnableCircularSkiTips) {
+                initial_y += SkiThickness / 6;
+            }
+            bd.position.Set(-m_platform_width / 2, initial_y);
 
-			b2PolygonShape ski;
-			std::vector< b2Vec2 > verts;
-			verts.emplace_back(-SkiLength / 2 - SkiThickness, -BodyHeight / 2);
-			verts.emplace_back(-SkiLength / 2, -BodyHeight / 2 - SkiThickness);
-			verts.emplace_back(SkiLength / 2, -BodyHeight / 2 - SkiThickness);
-			verts.emplace_back(SkiLength / 2 + SkiThickness, -BodyHeight / 2);
-			ski.Set(verts.data(), (int32)verts.size());
+            b2Body *skier = m_world->CreateBody(&bd);
 
-			b2CircleShape ski_back_shape;
-			ski_back_shape.m_p.Set(-SkiLength / 2.0f, -BodyHeight / 2 - SkiThickness * (2.0f / 3));
-			ski_back_shape.m_radius = SkiThickness / 2;
+            b2PolygonShape body;
+            body.SetAsBox(BodyWidth / 2, BodyHeight / 2);
 
-			b2CircleShape ski_front_shape;
-			ski_front_shape.m_p.Set(SkiLength / 2, -BodyHeight / 2 - SkiThickness * (2.0f / 3));
-			ski_front_shape.m_radius = SkiThickness / 2;
+            b2PolygonShape ski;
+            std::vector< b2Vec2 > verts;
+            verts.emplace_back(-SkiLength / 2 - SkiThickness, -BodyHeight / 2);
+            verts.emplace_back(-SkiLength / 2, -BodyHeight / 2 - SkiThickness);
+            verts.emplace_back(SkiLength / 2, -BodyHeight / 2 - SkiThickness);
+            verts.emplace_back(SkiLength / 2 + SkiThickness, -BodyHeight / 2);
+            ski.Set(verts.data(), (int32)verts.size());
 
-			b2FixtureDef fd;
-			fd.shape = &body;
-			fd.density = 1.0f;
-			skier->CreateFixture(&fd);
+            b2CircleShape ski_back_shape;
+            ski_back_shape.m_p.Set(-SkiLength / 2.0f, -BodyHeight / 2 - SkiThickness * (2.0f / 3));
+            ski_back_shape.m_radius = SkiThickness / 2;
 
-			fd.friction = SkiFriction;
-			fd.restitution = SkiRestitution;
+            b2CircleShape ski_front_shape;
+            ski_front_shape.m_p.Set(SkiLength / 2, -BodyHeight / 2 - SkiThickness * (2.0f / 3));
+            ski_front_shape.m_radius = SkiThickness / 2;
 
-			fd.shape = &ski;
-			skier->CreateFixture(&fd);
+            b2FixtureDef fd;
+            fd.shape = &body;
+            fd.density = 1.0f;
+            skier->CreateFixture(&fd);
 
-			if(EnableCircularSkiTips)
-			{
-				fd.shape = &ski_back_shape;
-				skier->CreateFixture(&fd);
+            fd.friction = SkiFriction;
+            fd.restitution = SkiRestitution;
 
-				fd.shape = &ski_front_shape;
-				skier->CreateFixture(&fd);
-			}
+            fd.shape = &ski;
+            skier->CreateFixture(&fd);
 
-			skier->SetLinearVelocity(b2Vec2(0.5f, 0.0f));
+            if (EnableCircularSkiTips) {
+                fd.shape = &ski_back_shape;
+                skier->CreateFixture(&fd);
 
-			m_skier = skier;
-		}
+                fd.shape = &ski_front_shape;
+                skier->CreateFixture(&fd);
+            }
 
-		g_camera.m_center = b2Vec2(m_platform_width / 2.0f, 0.0f);
-		g_camera.m_zoom = 0.4f;
-		m_fixed_camera = true;
-	}
+            skier->SetLinearVelocity(b2Vec2(0.5f, 0.0f));
 
-	void Keyboard(int key)
-	{
-		switch (key)
-		{
-			case Qt::Key_C:
-			m_fixed_camera = !m_fixed_camera;
-			if(m_fixed_camera)
-			{
-				g_camera.m_center = b2Vec2(m_platform_width / 2.0f, 0.0f);
-			}
-			break;
-		}
-	}
+            m_skier = skier;
+        }
 
-	void Step(Settings* settings)
-	{
-		g_debugDraw.DrawString(5, m_textLine, "Keys: c = Camera fixed/tracking");
-		m_textLine += DRAW_STRING_NEW_LINE;
+        g_camera.m_center = b2Vec2(m_platform_width / 2.0f, 0.0f);
+        g_camera.m_zoom = 0.4f;
+        m_fixed_camera = true;
+    }
 
-		if(!m_fixed_camera)
-		{
-			g_camera.m_center = m_skier->GetPosition();
-		}
+    void Keyboard(int key)
+    {
+        switch (key) {
+        case Qt::Key_C:
+            m_fixed_camera = !m_fixed_camera;
+            if (m_fixed_camera) {
+                g_camera.m_center = b2Vec2(m_platform_width / 2.0f, 0.0f);
+            }
+            break;
+        }
+    }
 
-		B2Emitter::Step(settings);
-	}
+    void Step(Settings *settings)
+    {
+        g_debugDraw.DrawString(5, m_textLine, "Keys: c = Camera fixed/tracking");
+        m_textLine += DRAW_STRING_NEW_LINE;
 
-	static B2Emitter* Create()
-	{
-		return new Skier;
-	}
+        if (!m_fixed_camera) {
+            g_camera.m_center = m_skier->GetPosition();
+        }
 
-	b2Body* m_skier;
-	float m_platform_width;
-	bool m_fixed_camera;
+        B2Emitter::Step(settings);
+    }
+
+    static B2Emitter *Create()
+    {
+        return new Skier;
+    }
+
+    b2Body *m_skier;
+    float m_platform_width;
+    bool m_fixed_camera;
 };
 
 #endif

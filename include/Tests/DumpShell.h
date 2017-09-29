@@ -24,8 +24,10 @@ class DumpShell : public B2Emitter
 {
 public:
 
-    DumpShell()
+    DumpShell(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         //Source code dump of Box2D scene: issue304-minimal-case.rube
         //
         //  Created by R.U.B.E 1.3.0

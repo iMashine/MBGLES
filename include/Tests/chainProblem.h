@@ -22,14 +22,16 @@
 class chainProblem : public B2Emitter
 {
 public:
-    chainProblem()
+    chainProblem(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         //dump
         {
             b2Vec2 g(0.000000000000000e+00f, -1.000000000000000e+01f);
             m_world->SetGravity(g);
-            b2Body** bodies = (b2Body**)b2Alloc(2 * sizeof(b2Body*));
-            b2Joint** joints = (b2Joint**)b2Alloc(0 * sizeof(b2Joint*));
+            b2Body **bodies = (b2Body **)b2Alloc(2 * sizeof(b2Body *));
+            b2Joint **joints = (b2Joint **)b2Alloc(0 * sizeof(b2Joint *));
             {
                 b2BodyDef bd;
                 bd.type = b2BodyType(0);
@@ -118,7 +120,7 @@ public:
         }
     }
 
-    static B2Emitter* Create()
+    static B2Emitter *Create()
     {
         return new chainProblem;
     }

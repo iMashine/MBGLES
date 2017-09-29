@@ -31,8 +31,10 @@ public:
         e_count = 8
     };
 
-    Cantilever()
+    Cantilever(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         b2Body *ground = NULL;
         {
             b2BodyDef bd;

@@ -28,8 +28,10 @@ public:
         e_rowCount = 0
     };
 
-    Confined()
+    Confined(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         {
             b2BodyDef bd;
             b2Body *ground = m_world->CreateBody(&bd);

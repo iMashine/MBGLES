@@ -161,8 +161,10 @@ public:
         e_multiple
     };
 
-    RayCast()
+    RayCast(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         // Ground body
         {
             b2BodyDef bd;

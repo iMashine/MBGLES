@@ -108,8 +108,10 @@ public:
         e_maxBodies = 256
     };
 
-    PolyShapes()
+    PolyShapes(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         // Ground body
         {
             b2BodyDef bd;

@@ -22,8 +22,10 @@
 class BodyTypes : public B2Emitter
 {
 public:
-    BodyTypes()
+    BodyTypes(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         b2Body *ground = NULL;
         {
             b2BodyDef bd;

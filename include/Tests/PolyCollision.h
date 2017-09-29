@@ -22,8 +22,10 @@
 class PolyCollision : public B2Emitter
 {
 public:
-    PolyCollision()
+    PolyCollision(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         {
             m_polygonA.SetAsBox(0.2f, 0.4f);
             m_transformA.Set(b2Vec2(0.0f, 0.0f), 0.0f);

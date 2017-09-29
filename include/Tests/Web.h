@@ -23,8 +23,10 @@
 class Web : public B2Emitter
 {
 public:
-    Web()
+    Web(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         b2Body *ground = NULL;
         {
             b2BodyDef bd;

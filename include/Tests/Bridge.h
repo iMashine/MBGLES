@@ -27,8 +27,10 @@ public:
         e_count = 30
     };
 
-    Bridge()
+    Bridge(uint id, QString name) :  B2Emitter(id, name)
     {
+        m_id = id;
+        m_name = name;
         b2Body *ground = NULL;
         {
             b2BodyDef bd;
