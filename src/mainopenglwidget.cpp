@@ -306,10 +306,11 @@ void MainOpenGLWidget::paintGL()
             m_manager->Render();
         }
         else if (m_emitters->get(m_emitters->selectItem())->GetType() == EmitterType::B2) {
-            ((B2Emitter *)m_emitters->get(m_emitters->selectItem()))->g_debugDraw = this->g_debugDraw;
-            ((B2Emitter *)m_emitters->get(m_emitters->selectItem()))->m_painter = this->m_painter;
-            ((B2Emitter *)m_emitters->get(m_emitters->selectItem()))->Step(&settings);
-//            ((B2Emitter *)m_emitters->get(m_emitters->selectItem()))->DrawTitle(m_emitters->get(m_emitters->selectItem())->GetEmitterName());
+            B2Emitter *emitter = ((B2Emitter *)m_emitters->get(m_emitters->selectItem()));
+            emitter->g_debugDraw = this->g_debugDraw;
+            emitter->m_painter = this->m_painter;
+            emitter->Step(&settings);
+            emitter->DrawTitle(emitter->GetEmitterName().toLatin1().data());
         }
     }
 
