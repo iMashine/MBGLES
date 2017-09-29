@@ -202,16 +202,36 @@ void EmitterList::selectItem(QModelIndex index)
     if (!m_list.isEmpty()) {
         if (m_select.row() == -1) {
             m_select = index;
-//            if (m_list.at(m_select))
-            ((MPEmitter *)m_list.at(m_select.row()))->SetState(MAGIC_STATE_UPDATE);
-            Q_ASSERT(MAGIC_SUCCESS == Magic_SetBBoxPeriod(m_list.at(m_select.row())->GetId(), 1));
+            if (m_list.at(m_select.row())->GetType() == EmitterType::MP) {
+                ((MPEmitter *)m_list.at(m_select.row()))->SetState(MAGIC_STATE_UPDATE);
+                Q_ASSERT(MAGIC_SUCCESS == Magic_SetBBoxPeriod(m_list.at(m_select.row())->GetId(), 1));
+            }
+            if (m_list.at(m_select.row())->GetType() == EmitterType::B2) {
+//                delete test;
+//                testSelection = newIndex;
+//                test = g_testEntries[testIndex].createFcn();
+//                test->g_debugDraw = g_debugDraw;
+//                test->m_painter = m_painter;
+            }
         }
         else {
             for (int i = 0; i < m_list.count(); i++) {
-                ((MPEmitter *)m_list.at(i))->SetState(MAGIC_STATE_STOP);
+                if (m_list.at(i)->GetType() == EmitterType::MP) {
+                    ((MPEmitter *)m_list.at(i))->SetState(MAGIC_STATE_STOP);
+                }
+                else  if (m_list.at(i)->GetType() == EmitterType::B2) {
+
+                }
             }
+
             m_select = index;
-            ((MPEmitter *)m_list.at(m_select.row()))->SetState(MAGIC_STATE_UPDATE);
+
+            if (m_list.at(m_select.row())->GetType() == EmitterType::MP) {
+                ((MPEmitter *)m_list.at(m_select.row()))->SetState(MAGIC_STATE_UPDATE);
+            }
+            else  if (m_list.at(m_select.row())->GetType() == EmitterType::B2) {
+
+            }
         }
     }
 }
@@ -274,6 +294,11 @@ Emitter *EmitterList::last()
 
     m_select = index(m_list.count() - 1, 0, QModelIndex());
     return m_list.last();
+}
+
+bool EmitterList::isEmpty()
+{
+    return m_list.isEmpty();
 }
 
 unsigned int EmitterList::getArrayIndex(unsigned int id)

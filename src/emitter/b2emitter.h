@@ -114,8 +114,12 @@ struct ContactPoint {
 class B2Emitter : public b2ContactListener, public Emitter
 {
 public:
+
     B2Emitter();
+    B2Emitter(uint id, QString name);
     virtual ~B2Emitter();
+
+    B2Emitter &operator=(const B2Emitter &from);
 
     void DrawTitle(const char *string);
     virtual void Step(Settings *settings);
@@ -161,6 +165,28 @@ public:
 
     void ShiftOrigin(const b2Vec2 &newOrigin);
 
+    EmitterType GetType()
+    {
+        return EmitterType::B2;
+    }
+
+    QString GetEmitterName()
+    {
+        return m_name;
+    }
+
+    void SetParticlesSpeed(uint value) {  }
+
+    uint GetParticlesSpeed() {  }
+
+    void SetParticlesSize(uint value) {  }
+
+    uint GetParticlesSize() {  }
+
+    void SetParticlesSaturation(uint value) {  }
+
+    uint GetParticlesSaturation() {  }
+
 protected:
     friend class DestructionListener;
     friend class BoundaryListener;
@@ -183,6 +209,7 @@ protected:
     b2Profile m_maxProfile;
     b2Profile m_totalProfile;
 
+    QString m_name;
 public:
     DebugDraw g_debugDraw;
     QPainter *m_painter;

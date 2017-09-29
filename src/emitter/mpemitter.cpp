@@ -44,11 +44,6 @@ MPEmitter &MPEmitter::operator=(const MPEmitter &from)
     return *this;
 }
 
-uint MPEmitter::GetId()
-{
-    return m_id;
-}
-
 QString MPEmitter::GetEmitterName()
 {
     return QString(Magic_GetEmitterName(m_id));

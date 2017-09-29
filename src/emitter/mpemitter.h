@@ -41,8 +41,6 @@ public:
 
     MPEmitter &operator=(const MPEmitter &from);
 
-    uint GetId();
-
     QString GetEmitterName();
 
     void Restart();
@@ -78,6 +76,11 @@ public:
     void SetManager(MP_Manager *manager);
 
     bool Contains(QPointF mousePos);
+
+    EmitterType GetType()
+    {
+        return EmitterType::MP;
+    }
 
     void SetParticlesSpeed(uint value);
 

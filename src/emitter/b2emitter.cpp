@@ -10,7 +10,7 @@ void DestructionListener::SayGoodbye(b2Joint *joint)
     }
 }
 
-B2Emitter::B2Emitter()
+B2Emitter::B2Emitter(uint id, QString name)
 {
     b2Vec2 gravity;
     gravity.Set(0.0f, -10.0f);
@@ -35,7 +35,8 @@ B2Emitter::B2Emitter()
     memset(&m_maxProfile, 0, sizeof(b2Profile));
     memset(&m_totalProfile, 0, sizeof(b2Profile));
 
-
+    m_id = id;
+    m_name = name;
 }
 
 B2Emitter::~B2Emitter()
@@ -44,6 +45,21 @@ B2Emitter::~B2Emitter()
     delete m_world;
     m_world = NULL;
 //    g_debugDraw.Destroy();
+}
+
+B2Emitter &B2Emitter::operator=(const B2Emitter &from)
+{
+    uint id = m_id;
+    QString name = m_name;
+
+//    delete this;
+
+//    this = from;
+
+    this->m_id = id;
+    this->m_name = name;
+
+    return *this;
 }
 
 void B2Emitter::PreSolve(b2Contact *contact, const b2Manifold *oldManifold)

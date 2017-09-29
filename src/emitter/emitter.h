@@ -5,6 +5,8 @@
 
 typedef unsigned int uint;
 
+enum EmitterType { MP, B2 };
+
 //
 class Emitter
 {
@@ -14,9 +16,14 @@ public:
 
     ~Emitter() { }
 
-    virtual uint GetId() = 0;
+    virtual uint GetId()
+    {
+        return m_id;
+    }
 
     virtual QString GetEmitterName() = 0;
+
+    virtual EmitterType GetType() = 0;
 
     virtual void SetParticlesSpeed(uint value) = 0;
 
@@ -30,11 +37,7 @@ public:
 
     virtual uint GetParticlesSaturation() = 0;
 
-
-
-//protected:
-
-    QString m_name;
+protected:
     uint m_id;
 };
 

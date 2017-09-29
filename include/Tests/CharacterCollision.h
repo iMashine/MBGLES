@@ -19,13 +19,16 @@
 #ifndef CHARACTER_COLLISION_H
 #define CHARACTER_COLLISION_H
 
+#include "../../src/emitter/b2emitter.h"
+
 /// This is a test of typical character collision scenarios. This does not
 /// show how you should implement a character in your application.
 /// Instead this is used to test smooth collision on edge chains.
 class CharacterCollision : public B2Emitter
 {
 public:
-    CharacterCollision()
+    CharacterCollision(uint id, QString name)
+        : B2Emitter(id, name)
     {
         // Ground body
         {

@@ -60,6 +60,8 @@ public:
 
     Emitter *last();
 
+    bool isEmpty();
+
 private:
     unsigned int getArrayIndex(unsigned int id);
 

@@ -80,13 +80,17 @@ private:
     EmitterList *m_emitters;
 
     QList<uint> occupiedIdentificatos;
-    QList<TestEntry> g_testEntries;
+
+    Settings settings;
 
 public:
     float *m_vertices;
     unsigned char *m_colors;
     float *m_textureCoords;
     unsigned short *m_indexes;
+
+    DebugDraw g_debugDraw;
+    Camera g_camera;
 
 };
 

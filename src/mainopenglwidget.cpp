@@ -88,8 +88,19 @@ void MainOpenGLWidget::initializeGL()
     m_functions.initializeOpenGLFunctions();
     m_functions.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     m_program.Create();
+
+    g_debugDraw.Create(&g_camera, &m_functions);
+
+//    testIndex = b2Clamp(testIndex, 0, g_testEntries.count() - 1);
+//    testSelection = testIndex;
+
+//    test = g_testEntries[testIndex].createFcn();
+//    test->g_debugDraw = g_debugDraw;
+
     initializeMP();
     timer.start(12, this);
+
+
 }
 
 void MainOpenGLWidget::initializeMP()
@@ -140,10 +151,15 @@ void MainOpenGLWidget::initializeMP()
 
     uint AvailableId = GetId();
 
-//    B2Emitter *emitter = new CharacterCollision();
-//    emitter->m_id = AvailableId;
-//    emitter->m_name = "Character Collision";
-//    m_emitters->add(emitter);
+    B2Emitter *emitter = new CharacterCollision(AvailableId, "Character Collision");
+//    emitter = CharacterCollision::Create();
+    m_emitters->add(emitter);
+
+//    delete test;
+//    testSelection = newIndex;
+//    test = g_testEntries[testIndex].createFcn();
+//    test->g_debugDraw = g_debugDraw;
+//    test->m_painter = m_painter;
 
 //    g_testEntries = {
 //        {AvailableId++, "Character Collision", CharacterCollision::Create},
@@ -285,7 +301,17 @@ void MainOpenGLWidget::paintGL()
 
     m_painter->beginNativePainting();
 
-    m_manager->Render();
+    if (!m_emitters->isEmpty() && m_emitters->selectItem().isValid()) {
+        if (m_emitters->get(m_emitters->selectItem())->GetType() == EmitterType::MP) {
+            m_manager->Render();
+        }
+        else if (m_emitters->get(m_emitters->selectItem())->GetType() == EmitterType::B2) {
+            ((B2Emitter *)m_emitters->get(m_emitters->selectItem()))->g_debugDraw = this->g_debugDraw;
+            ((B2Emitter *)m_emitters->get(m_emitters->selectItem()))->m_painter = this->m_painter;
+            ((B2Emitter *)m_emitters->get(m_emitters->selectItem()))->Step(&settings);
+//            ((B2Emitter *)m_emitters->get(m_emitters->selectItem()))->DrawTitle(m_emitters->get(m_emitters->selectItem())->GetEmitterName());
+        }
+    }
 
     m_program.setUniformValue(m_program.uniform_screenscale, m_projection);
 
