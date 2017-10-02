@@ -90,7 +90,7 @@ public:
     unsigned short *m_indexes;
 
     DebugDraw g_debugDraw;
-    Camera g_camera;
+    Camera *g_camera;
 
 };
 

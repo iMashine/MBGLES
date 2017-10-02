@@ -88,61 +88,16 @@ HEADERS += \
     include/Box2D/Dynamics/b2WorldCallbacks.h \
     include/Box2D/Rope/b2Rope.h \
     include/Box2D/Box2D.h \
-    include/Tests/AddPair.h \
-    include/Tests/ApplyForce.h \
-    include/Tests/BasicSliderCrank.h \
-    include/Tests/BodyTypes.h \
     include/Tests/Breakable.h \
-    include/Tests/Bridge.h \
-    include/Tests/BulletTest.h \
-    include/Tests/Cantilever.h \
-    include/Tests/Car.h \
-    include/Tests/Chain.h \
-    include/Tests/chainProblem.h \
-    include/Tests/CharacterCollision.h \
     include/Tests/CollisionFiltering.h \
     include/Tests/CollisionProcessing.h \
     include/Tests/CompoundShapes.h \
-    include/Tests/Confined.h \
-    include/Tests/ContinuousTest.h \
-    include/Tests/ConvexHull.h \
-    include/Tests/ConveyorBelt.h \
-    include/Tests/DistanceTest.h \
-    include/Tests/Dominos.h \
-    include/Tests/DumpShell.h \
-    include/Tests/DynamicTreeTest.h \
-    include/Tests/EdgeShapes.h \
-    include/Tests/EdgeTest.h \
-    include/Tests/Gears.h \
-    include/Tests/HeavyOnLight.h \
-    include/Tests/HeavyOnLightTwo.h \
-    include/Tests/Mobile.h \
-    include/Tests/MobileBalanced.h \
-    include/Tests/MotorJoint.h \
-    include/Tests/OneSidedPlatform.h \
-    include/Tests/Pinball.h \
-    include/Tests/PolyCollision.h \
-    include/Tests/PolyShapes.h \
-    include/Tests/Prismatic.h \
-    include/Tests/Pulleys.h \
     include/Tests/Pyramid.h \
-    include/Tests/RayCast.h \
-    include/Tests/Revolute.h \
-    include/Tests/Rope.h \
-    include/Tests/RopeJoint.h \
-    include/Tests/SensorTest.h \
-    include/Tests/ShapeEditing.h \
-    include/Tests/Skier.h \
-    include/Tests/SliderCrank.h \
     include/Tests/SphereStack.h \
-    include/Tests/TheoJansen.h \
     include/Tests/Tiles.h \
-    include/Tests/TimeOfImpact.h \
     include/Tests/Tumbler.h \
-    include/Tests/VaryingFriction.h \
     include/Tests/VaryingRestitution.h \
     include/Tests/VerticalStack.h \
-    include/Tests/Web.h \
     src/emitter/emitter.h \
     src/emitter/emitterlist.h \
     src/emitter/emitterslistview.h \
@@ -157,7 +112,9 @@ HEADERS += \
     src/rendertriangles.h \
     src/shaderprogram.h \
     src/tests.h \
-    src/emitter/b2emitter.h
+    src/emitter/b2emitter.h \
+    src/floatrange.h \
+    src/figures.h
 
 SOURCES += \
     include/_core/mp.cpp \
@@ -175,5 +132,7 @@ SOURCES += \
     src/renderpoints.cpp \
     src/rendertriangles.cpp \
     src/shaderprogram.cpp \
-    src/emitter/b2emitter.cpp
+    src/emitter/b2emitter.cpp \
+    src/floatrange.cpp \
+    src/figures.cpp
 

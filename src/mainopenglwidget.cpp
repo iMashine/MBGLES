@@ -89,18 +89,12 @@ void MainOpenGLWidget::initializeGL()
     m_functions.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     m_program.Create();
 
-    g_debugDraw.Create(&g_camera, &m_functions);
+    g_camera = new Camera(this->width(), this->height());
 
-//    testIndex = b2Clamp(testIndex, 0, g_testEntries.count() - 1);
-//    testSelection = testIndex;
-
-//    test = g_testEntries[testIndex].createFcn();
-//    test->g_debugDraw = g_debugDraw;
+    g_debugDraw.Create(g_camera, &m_functions);
 
     initializeMP();
     timer.start(12, this);
-
-
 }
 
 void MainOpenGLWidget::initializeMP()
@@ -151,16 +145,28 @@ void MainOpenGLWidget::initializeMP()
 
     uint AvailableId = GetId();
 
-    B2Emitter *emitter = new CharacterCollision(AvailableId, "Character Collision"); m_emitters->add(emitter);
-    emitter = new Tiles(AvailableId++, "Tiles"); m_emitters->add(emitter);
-    emitter = new VerticalStack(AvailableId++, "Vertical Stack"); m_emitters->add(emitter);
-    emitter = new SphereStack(AvailableId++, "Sphere Stack"); m_emitters->add(emitter);
-    emitter = new Tumbler(AvailableId++, "Tumbler"); m_emitters->add(emitter);
-    emitter = new VaryingRestitution(AvailableId++, "Varying Restitution"); m_emitters->add(emitter);
-    emitter = new Pyramid(AvailableId++, "Pyramid"); m_emitters->add(emitter);
-    emitter = new CollisionFiltering(AvailableId++, "Collision Filtering"); m_emitters->add(emitter);
-    emitter = new CollisionProcessing(AvailableId++, "Collision Processing"); m_emitters->add(emitter);
-    emitter = new CompoundShapes(AvailableId++, "Compound Shapes"); m_emitters->add(emitter);
+    B2Emitter *emitter = new Breakable(AvailableId, "Breakable"); m_emitters->add(emitter);
+    emitter->g_debugDraw = g_debugDraw;
+    emitter = new Figures(AvailableId, "Figures", &g_debugDraw); m_emitters->add(emitter);
+    emitter->g_debugDraw = g_debugDraw;
+//    emitter = new Tiles(AvailableId++, "Tiles"); m_emitters->add(emitter);
+//    emitter->g_debugDraw = g_debugDraw;
+//    emitter = new VerticalStack(AvailableId++, "Vertical Stack"); m_emitters->add(emitter);
+//    emitter->g_debugDraw = g_debugDraw;
+//    emitter = new SphereStack(AvailableId++, "Sphere Stack"); m_emitters->add(emitter);
+//    emitter->g_debugDraw = g_debugDraw;
+//    emitter = new Tumbler(AvailableId++, "Tumbler"); m_emitters->add(emitter);
+//    emitter->g_debugDraw = g_debugDraw;
+//    emitter = new VaryingRestitution(AvailableId++, "Varying Restitution"); m_emitters->add(emitter);
+//    emitter->g_debugDraw = g_debugDraw;
+//    emitter = new Pyramid(AvailableId++, "Pyramid"); m_emitters->add(emitter);
+//    emitter->g_debugDraw = g_debugDraw;
+//    emitter = new CollisionFiltering(AvailableId++, "Collision Filtering"); m_emitters->add(emitter);
+//    emitter->g_debugDraw = g_debugDraw;
+//    emitter = new CollisionProcessing(AvailableId++, "Collision Processing"); m_emitters->add(emitter);
+//    emitter->g_debugDraw = g_debugDraw;
+//    emitter = new CompoundShapes(AvailableId++, "Compound Shapes"); m_emitters->add(emitter);
+//    emitter->g_debugDraw = g_debugDraw;
     MainWidget *widget = (MainWidget *)m_parent;
     widget->m_emittersList->setCurrentItemIndex(m_emitters->selectItem());
 }

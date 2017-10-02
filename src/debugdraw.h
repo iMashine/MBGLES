@@ -45,6 +45,9 @@ private:
 
 public:
     Camera *g_camera;
+    QColor mainColor;
+
+    bool isEqualColors = true;
 };
 
 #endif // DEBUGDRAW_H

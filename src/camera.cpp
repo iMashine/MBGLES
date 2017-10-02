@@ -8,6 +8,14 @@ Camera::Camera()
     m_height = 800;
 }
 
+Camera::Camera(int width, int height)
+{
+    m_center.Set(0.0f, 20.0f);
+    m_zoom = 1.0f;
+    m_width = width;
+    m_height = height;
+}
+
 b2Vec2 Camera::ConvertScreenToWorld(const b2Vec2 &ps)
 {
     float32 w = float32(m_width);

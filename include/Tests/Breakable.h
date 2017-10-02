@@ -19,6 +19,9 @@
 #ifndef BREAKABLE_TEST_H
 #define BREAKABLE_TEST_H
 
+#include <src/emitter/b2emitter.h>
+
+
 // This is used to test sensor shapes.
 class Breakable : public B2Emitter
 {

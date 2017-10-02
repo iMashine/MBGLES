@@ -9,7 +9,7 @@
 #include <errno.h>
 #include <QFile>
 
-#include "mpemitter.h"
+#include "src/emitter/mpemitter.h"
 
 // ------------------------------------------------------------------------------------------
 
