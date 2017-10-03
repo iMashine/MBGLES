@@ -254,7 +254,7 @@ void MainOpenGLWidget::paintGL()
             emitter->g_debugDraw = this->g_debugDraw;
             emitter->m_painter = this->m_painter;
             emitter->Step(&settings);
-            emitter->DrawTitle(emitter->GetEmitterName().toLatin1().data());
+//            emitter->DrawTitle(emitter->GetEmitterName().toLatin1().data());
         }
     }
 

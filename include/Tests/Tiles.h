@@ -126,14 +126,14 @@ public:
         float32 minimumHeight = ceilf(logf(float32(minimumNodeCount)) / logf(2.0f));
         char buffer[1024];
         sprintf(buffer, "dynamic tree height = %d, min = %d", height, int32(minimumHeight));
-        g_debugDraw.DrawString(m_painter, 5, m_textLine, buffer);
+//        g_debugDraw.DrawString(m_painter, 5, m_textLine, buffer);
         m_textLine += DRAW_STRING_NEW_LINE;
 
         B2Emitter::Step(settings);
 
         sprintf(buffer, "create time = %6.2f ms, fixture count = %d",
                 m_createTime, m_fixtureCount);
-        g_debugDraw.DrawString(m_painter, 5, m_textLine, buffer);
+//        g_debugDraw.DrawString(m_painter, 5, m_textLine, buffer);
         m_textLine += DRAW_STRING_NEW_LINE;
 
         //b2DynamicTree* tree = &m_world->m_contactManager.m_broadPhase.m_tree;

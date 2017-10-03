@@ -3,8 +3,7 @@
 Figures::Figures(uint id, QString name, DebugDraw *debugDraw) :
     B2Emitter(id, name),
     m_isEqualSize(false),
-    m_isEqualColors(false),
-    m_isCircles(true),
+    m_isCircles(false),
     m_isTriangles(true),
     m_isRectangles(true)
 {
@@ -20,10 +19,9 @@ Figures::Figures(uint id, QString name, DebugDraw *debugDraw) :
 
     CreateObstacle(obstacle);
 
-    m_size = FloatRange(0.250f, 0.800f);
+    m_size = FloatRange(0.5f, 0.8f);
 
-    debugDraw->mainColor = QColor(Qt::green);
-//    debugDraw->isEqualColors = false;
+    debugDraw->mainColor = QColor(Qt::darkCyan);
 }
 
 void Figures::Step(Settings *settings)
@@ -87,7 +85,7 @@ void Figures::Step(Settings *settings)
         b2BodyDef bd;
         bd.type = b2_dynamicBody;
         bd.position.Set(x + 5.0f, y);
-        bd.angle = RandomFloat(-b2_pi, b2_pi);
+//        bd.angle = RandomFloat(-b2_pi, b2_pi);
         bd.linearDamping = 0.0f;
         bd.angularDamping = 0.01f;
         b2Body *body = m_world->CreateBody(&bd);
@@ -108,16 +106,16 @@ b2Shape *Figures::CreateTriangle()
 
     if (m_isEqualSize) {
         float32 size = m_size.GetLeftBound();
-        vertices[0] = b2Mul(xf1, b2Vec2(-1 * size, 0.0f));
-        vertices[1] = b2Mul(xf1, b2Vec2(size, 0.0f));
-        vertices[2] = b2Mul(xf1, b2Vec2(0.0f, size));
+        vertices[0] = b2Mul(xf1, b2Vec2(size, -size));
+        vertices[1] = b2Mul(xf1, b2Vec2(-size, -size));
+        vertices[2] = b2Mul(xf1, b2Vec2(-size, size));
         triangle->Set(vertices, 3);
     }
     else {
         float32 size = RandomFloat(m_size.GetLeftBound(), m_size.GetRightBound());
-        vertices[0] = b2Mul(xf1, b2Vec2(-1 * size, 0.0f));
-        vertices[1] = b2Mul(xf1, b2Vec2(size, 0.0f));
-        vertices[2] = b2Mul(xf1, b2Vec2(0.0f, size));
+        vertices[0] = b2Mul(xf1, b2Vec2(size, -size));
+        vertices[1] = b2Mul(xf1, b2Vec2(-size, -size));
+        vertices[2] = b2Mul(xf1, b2Vec2(-size, size));
         triangle->Set(vertices, 3);
     }
 

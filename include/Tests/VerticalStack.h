@@ -122,12 +122,12 @@ public:
     void Step(Settings *settings)
     {
         B2Emitter::Step(settings);
-        g_debugDraw.DrawString(m_painter, 5, m_textLine, "Press: (,) to launch a bullet.");
+//        g_debugDraw.DrawString(m_painter, 5, m_textLine, "Press: (,) to launch a bullet.");
         m_textLine += DRAW_STRING_NEW_LINE;
 
         char buffer[1024];
         sprintf(buffer, "Blocksolve = %d", g_blockSolve);
-        g_debugDraw.DrawString(m_painter, 5, m_textLine, buffer);
+//        g_debugDraw.DrawString(m_painter, 5, m_textLine, buffer);
         //if (m_stepCount == 300)
         //{
         //  if (m_bullet != NULL)

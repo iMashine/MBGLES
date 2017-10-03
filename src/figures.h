@@ -32,8 +32,6 @@ private:
     bool m_isTriangles = false;
     bool m_isCircles = true;
     bool m_isRectangles = false;
-
-    bool m_isEqualColors = true;
 };
 
 #endif // FIGURES_H

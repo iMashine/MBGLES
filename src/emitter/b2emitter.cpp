@@ -98,12 +98,6 @@ void B2Emitter::PreSolve(b2Contact *contact, const b2Manifold *oldManifold)
     }
 }
 
-void B2Emitter::DrawTitle(const char *string)
-{
-    g_debugDraw.DrawString(m_painter, 5, DRAW_STRING_NEW_LINE, string);
-    m_textLine = 3 * DRAW_STRING_NEW_LINE;
-}
-
 class QueryCallback : public b2QueryCallback
 {
 public:
@@ -267,7 +261,7 @@ void B2Emitter::Step(Settings *settings)
             timeStep = 0.0f;
         }
 
-        g_debugDraw.DrawString(m_painter, 5, m_textLine, "****PAUSED****");
+//        g_debugDraw.DrawString(m_painter, 5, m_textLine, "****PAUSED****");
         m_textLine += DRAW_STRING_NEW_LINE;
     }
 

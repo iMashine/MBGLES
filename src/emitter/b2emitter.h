@@ -121,7 +121,7 @@ public:
 
     B2Emitter &operator=(const B2Emitter &from);
 
-    void DrawTitle(const char *string);
+//    void DrawTitle(const char *string);
     virtual void Step(Settings *settings);
     virtual void Keyboard(int key)
     {
