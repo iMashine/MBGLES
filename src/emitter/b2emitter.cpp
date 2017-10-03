@@ -294,28 +294,6 @@ void B2Emitter::Step(Settings *settings)
         ++m_stepCount;
     }
 
-    char buffer[1024];
-
-    if (settings->drawStats) {
-        int32 bodyCount = m_world->GetBodyCount();
-        int32 contactCount = m_world->GetContactCount();
-        int32 jointCount = m_world->GetJointCount();
-
-        sprintf(buffer, "bodies/contacts/joints = %d/%d/%d", bodyCount, contactCount, jointCount);
-
-        g_debugDraw.DrawString(m_painter, 5, m_textLine, buffer);
-        m_textLine += DRAW_STRING_NEW_LINE;
-
-        int32 proxyCount = m_world->GetProxyCount();
-        int32 height = m_world->GetTreeHeight();
-        int32 balance = m_world->GetTreeBalance();
-        float32 quality = m_world->GetTreeQuality();
-
-        sprintf(buffer, "proxies/height/balance/quality = %d/%d/%d/%g", proxyCount, height, balance, quality);
-        g_debugDraw.DrawString(m_painter, 5, m_textLine, buffer);
-        m_textLine += DRAW_STRING_NEW_LINE;
-    }
-
     // Track maximum profile times
     {
         const b2Profile &p = m_world->GetProfile();
@@ -336,49 +314,6 @@ void B2Emitter::Step(Settings *settings)
         m_totalProfile.solvePosition += p.solvePosition;
         m_totalProfile.solveTOI += p.solveTOI;
         m_totalProfile.broadphase += p.broadphase;
-    }
-
-    if (settings->drawProfile) {
-        const b2Profile &p = m_world->GetProfile();
-
-        b2Profile aveProfile;
-        memset(&aveProfile, 0, sizeof(b2Profile));
-        if (m_stepCount > 0) {
-            float32 scale = 1.0f / m_stepCount;
-            aveProfile.step = scale * m_totalProfile.step;
-            aveProfile.collide = scale * m_totalProfile.collide;
-            aveProfile.solve = scale * m_totalProfile.solve;
-            aveProfile.solveInit = scale * m_totalProfile.solveInit;
-            aveProfile.solveVelocity = scale * m_totalProfile.solveVelocity;
-            aveProfile.solvePosition = scale * m_totalProfile.solvePosition;
-            aveProfile.solveTOI = scale * m_totalProfile.solveTOI;
-            aveProfile.broadphase = scale * m_totalProfile.broadphase;
-        }
-
-        sprintf(buffer, "step [ave] (max) = %5.2f [%6.2f] (%6.2f)", p.step, aveProfile.step, m_maxProfile.step);
-        g_debugDraw.DrawString(m_painter, 5, m_textLine, buffer);
-        m_textLine += DRAW_STRING_NEW_LINE;
-        sprintf(buffer, "collide [ave] (max) = %5.2f [%6.2f] (%6.2f)", p.collide, aveProfile.collide, m_maxProfile.collide);
-        g_debugDraw.DrawString(m_painter, 5, m_textLine, buffer);
-        m_textLine += DRAW_STRING_NEW_LINE;
-        sprintf(buffer, "solve [ave] (max) = %5.2f [%6.2f] (%6.2f)", p.solve, aveProfile.solve, m_maxProfile.solve);
-        g_debugDraw.DrawString(m_painter, 5, m_textLine, buffer);
-        m_textLine += DRAW_STRING_NEW_LINE;
-        sprintf(buffer, "solve init [ave] (max) = %5.2f [%6.2f] (%6.2f)", p.solveInit, aveProfile.solveInit, m_maxProfile.solveInit);
-        g_debugDraw.DrawString(m_painter, 5, m_textLine, buffer);
-        m_textLine += DRAW_STRING_NEW_LINE;
-        sprintf(buffer, "solve velocity [ave] (max) = %5.2f [%6.2f] (%6.2f)", p.solveVelocity, aveProfile.solveVelocity, m_maxProfile.solveVelocity);
-        g_debugDraw.DrawString(m_painter, 5, m_textLine, buffer);
-        m_textLine += DRAW_STRING_NEW_LINE;
-        sprintf(buffer, "solve position [ave] (max) = %5.2f [%6.2f] (%6.2f)", p.solvePosition, aveProfile.solvePosition, m_maxProfile.solvePosition);
-        g_debugDraw.DrawString(m_painter, 5, m_textLine, buffer);
-        m_textLine += DRAW_STRING_NEW_LINE;
-        sprintf(buffer, "solveTOI [ave] (max) = %5.2f [%6.2f] (%6.2f)", p.solveTOI, aveProfile.solveTOI, m_maxProfile.solveTOI);
-        g_debugDraw.DrawString(m_painter, 5, m_textLine, buffer);
-        m_textLine += DRAW_STRING_NEW_LINE;
-        sprintf(buffer, "broad-phase [ave] (max) = %5.2f [%6.2f] (%6.2f)", p.broadphase, aveProfile.broadphase, m_maxProfile.broadphase);
-        g_debugDraw.DrawString(m_painter, 5, m_textLine, buffer);
-        m_textLine += DRAW_STRING_NEW_LINE;
     }
 
     if (m_mouseJoint) {

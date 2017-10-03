@@ -12,6 +12,8 @@ public:
     Figures(uint id, QString name, DebugDraw *debugDraw);
 
     void Step(Settings *settings);
+    void CreateObstacle(const b2PolygonShape shape);
+
 private:
 
     b2Shape *CreateTriangle();

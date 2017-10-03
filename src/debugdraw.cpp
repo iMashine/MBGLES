@@ -68,11 +68,11 @@ void DebugDraw::DrawPolygon(const b2Vec2 *vertices, int32 vertexCount, const b2C
     b2Vec2 p1 = vertices[vertexCount - 1];
     for (int32 i = 0; i < vertexCount; ++i) {
         b2Vec2 p2 = vertices[i];
-//        m_lines->Vertex(p1, color);
-//        m_lines->Vertex(p2, color);
+////        m_lines->Vertex(p1, color);
+////        m_lines->Vertex(p2, color);
 
-        m_lines->Vertex(p1, fillColor);
-        m_lines->Vertex(p2, fillColor);
+//        m_lines->Vertex(p1, fillColor);
+//        m_lines->Vertex(p2, fillColor);
         p1 = p2;
     }
 }
@@ -102,11 +102,11 @@ void DebugDraw::DrawSolidPolygon(const b2Vec2 *vertices, int32 vertexCount, cons
     b2Vec2 p1 = vertices[vertexCount - 1];
     for (int32 i = 0; i < vertexCount; ++i) {
         b2Vec2 p2 = vertices[i];
-//        m_lines->Vertex(p1, color);
-//        m_lines->Vertex(p2, color);
+////        m_lines->Vertex(p1, color);
+////        m_lines->Vertex(p2, color);
 
-        m_lines->Vertex(p1, fillColor);
-        m_lines->Vertex(p2, fillColor);
+//        m_lines->Vertex(p1, fillColor);
+//        m_lines->Vertex(p2, fillColor);
         p1 = p2;
     }
 }
@@ -140,11 +140,11 @@ void DebugDraw::DrawCircle(const b2Vec2 &center, float32 radius, const b2Color &
         r2.x = cosInc * r1.x - sinInc * r1.y;
         r2.y = sinInc * r1.x + cosInc * r1.y;
         b2Vec2 v2 = center + radius * r2;
-//        m_lines->Vertex(v1, color);
-//        m_lines->Vertex(v2, color);
+////        m_lines->Vertex(v1, color);
+////        m_lines->Vertex(v2, color);
 
-        m_lines->Vertex(v1, fillColor);
-        m_lines->Vertex(v2, fillColor);
+//        m_lines->Vertex(v1, fillColor);
+//        m_lines->Vertex(v2, fillColor);
         r1 = r2;
         v1 = v2;
     }
@@ -194,11 +194,11 @@ void DebugDraw::DrawSolidCircle(const b2Vec2 &center, float32 radius, const b2Ve
         r2.x = cosInc * r1.x - sinInc * r1.y;
         r2.y = sinInc * r1.x + cosInc * r1.y;
         b2Vec2 v2 = center + radius * r2;
-//        m_lines->Vertex(v1, color);
-//        m_lines->Vertex(v2, color);
+////        m_lines->Vertex(v1, color);
+////        m_lines->Vertex(v2, color);
 
-        m_lines->Vertex(v1, fillColor);
-        m_lines->Vertex(v2, fillColor);
+//        m_lines->Vertex(v1, fillColor);
+//        m_lines->Vertex(v2, fillColor);
 
         r1 = r2;
         v1 = v2;
@@ -206,11 +206,11 @@ void DebugDraw::DrawSolidCircle(const b2Vec2 &center, float32 radius, const b2Ve
 
     // Draw a line fixed in the circle to animate rotation.
     b2Vec2 p = center + radius * axis;
-//    m_lines->Vertex(center, color);
-//    m_lines->Vertex(p, color);
+////    m_lines->Vertex(center, color);
+////    m_lines->Vertex(p, color);
 
-    m_lines->Vertex(center, fillColor);
-    m_lines->Vertex(p, fillColor);
+//    m_lines->Vertex(center, fillColor);
+//    m_lines->Vertex(p, fillColor);
 }
 
 //
@@ -229,11 +229,11 @@ void DebugDraw::DrawSegment(const b2Vec2 &p1, const b2Vec2 &p2, const b2Color &c
         fillColor = b2Color(r, g, b, a);
     }
 
-//    m_lines->Vertex(p1, color);
-//    m_lines->Vertex(p2, color);
+////    m_lines->Vertex(p1, color);
+////    m_lines->Vertex(p2, color);
 
-    m_lines->Vertex(p1, fillColor);
-    m_lines->Vertex(p2, fillColor);
+//    m_lines->Vertex(p1, fillColor);
+//    m_lines->Vertex(p2, fillColor);
 }
 
 //
@@ -244,13 +244,13 @@ void DebugDraw::DrawTransform(const b2Transform &xf)
     b2Color green(0.0f, 1.0f, 0.0f);
     b2Vec2 p1 = xf.p, p2;
 
-    m_lines->Vertex(p1, red);
+//    m_lines->Vertex(p1, red);
     p2 = p1 + k_axisScale * xf.q.GetXAxis();
-    m_lines->Vertex(p2, red);
+//    m_lines->Vertex(p2, red);
 
-    m_lines->Vertex(p1, green);
+//    m_lines->Vertex(p1, green);
     p2 = p1 + k_axisScale * xf.q.GetYAxis();
-    m_lines->Vertex(p2, green);
+//    m_lines->Vertex(p2, green);
 }
 
 //
@@ -269,8 +269,8 @@ void DebugDraw::DrawPoint(const b2Vec2 &p, float32 size, const b2Color &color)
         fillColor = b2Color(r, g, b, a);
     }
 
-//    m_points->Vertex(p, color, size);
-    m_points->Vertex(p, fillColor, size);
+////    m_points->Vertex(p, color, size);
+//    m_points->Vertex(p, fillColor, size);
 }
 
 //
@@ -300,24 +300,12 @@ void DebugDraw::DrawAABB(b2AABB *aabb, const b2Color &c)
     b2Vec2 p2 = b2Vec2(aabb->upperBound.x, aabb->lowerBound.y);
     b2Vec2 p3 = aabb->upperBound;
     b2Vec2 p4 = b2Vec2(aabb->lowerBound.x, aabb->upperBound.y);
-
-    m_lines->Vertex(p1, c);
-    m_lines->Vertex(p2, c);
-
-    m_lines->Vertex(p2, c);
-    m_lines->Vertex(p3, c);
-
-    m_lines->Vertex(p3, c);
-    m_lines->Vertex(p4, c);
-
-    m_lines->Vertex(p4, c);
-    m_lines->Vertex(p1, c);
 }
 
 //
 void DebugDraw::Flush()
 {
     m_triangles->Flush();
-    m_lines->Flush();
-    m_points->Flush();
+//    m_lines->Flush();
+//    m_points->Flush();
 }

@@ -3,29 +3,26 @@
 Figures::Figures(uint id, QString name, DebugDraw *debugDraw) :
     B2Emitter(id, name),
     m_isEqualSize(false),
-    m_isEqualColors(true),
-    m_isCircles(false),
-    m_isTriangles(false),
+    m_isEqualColors(false),
+    m_isCircles(true),
+    m_isTriangles(true),
     m_isRectangles(true)
 {
     m_id = id;
     m_name = name;
     this->g_debugDraw = *debugDraw;
 
-    {
-        b2BodyDef bd;
-        bd.position.Set(0.0f, 0.0f);
-        b2Body *body = m_world->CreateBody(&bd);
+    float32 y = g_debugDraw.g_camera->ConvertScreenToWorld(b2Vec2(0, g_debugDraw.g_camera->m_height)).y,
+            x = g_debugDraw.g_camera->ConvertScreenToWorld(b2Vec2(g_debugDraw.g_camera->m_width, 0)).x;
 
-        b2EdgeShape shape;
-        shape.Set(b2Vec2(50.0f, 0.0f), b2Vec2(-50.0f, 0.0f));
+    b2PolygonShape obstacle;
+    obstacle.SetAsBox(25.0f, 2.0f, b2Vec2((x / 2),  10.0f), 0);
 
-        body->CreateFixture(&shape, 0.0f);
-    }
+    CreateObstacle(obstacle);
 
     m_size = FloatRange(0.250f, 0.800f);
 
-    debugDraw->mainColor = QColor(Qt::cyan);
+    debugDraw->mainColor = QColor(Qt::green);
 //    debugDraw->isEqualColors = false;
 }
 
@@ -96,7 +93,6 @@ void Figures::Step(Settings *settings)
         b2Body *body = m_world->CreateBody(&bd);
         body->CreateFixture(&fd);
         m_count++;
-
     }
 }
 
@@ -159,4 +155,24 @@ b2Shape *Figures::CreateRectangle()
     }
 
     return rectangle;
+}
+
+void Figures::CreateObstacle(const b2PolygonShape shape)
+{
+    b2BodyDef bd;
+    bd.position.Set(0.0f, 0.0f);
+    b2Body *body = m_world->CreateBody(&bd);
+
+    int vertexCount = shape.GetVertexCount();
+    b2EdgeShape shapes[vertexCount];
+
+    for (int i = 0; i < vertexCount - 1; i++) {
+        shapes[i].Set(shape.GetVertex(i), shape.GetVertex(i + 1));
+    }
+
+    shapes[vertexCount - 1].Set(shape.GetVertex(vertexCount - 1), shape.GetVertex(0));
+
+    for (int i = 0; i < vertexCount; i++) {
+        body->CreateFixture(&shapes[i], 0.0f);
+    }
 }

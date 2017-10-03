@@ -50,6 +50,8 @@ void RenderTriangles::Create(QOpenGLFunctions *functions)
     m_projectionUniform = m_program.uniformLocation("projectionMatrix");
 
     m_count = 0;
+
+
 }
 
 void RenderTriangles::Destroy()
@@ -65,6 +67,7 @@ void RenderTriangles::Vertex(const b2Vec2 &v, const b2Color &c)
 
     m_vertices[m_count] = v;
     m_colors[m_count] = c;
+
     ++m_count;
 }
 
@@ -92,26 +95,3 @@ void RenderTriangles::Flush()
 
     m_count = 0;
 }
-
-////
-
-//    const char *vs = \
-//                     "#version 330\n"
-//                     "uniform mat4 projectionMatrix;\n"
-//                     "layout(location = 0) in vec2 v_position;\n"
-//                     "layout(location = 1) in vec4 v_color;\n"
-//                     "out vec4 f_color;\n"
-//                     "void main(void)\n"
-//                     "{\n"
-//                     "    f_color = v_color;\n"
-//                     "    gl_Position = projectionMatrix * vec4(v_position, 0.0f, 1.0f);\n"
-//                     "}\n";
-
-//    const char *fs = \
-//                     "#version 330\n"
-//                     "in vec4 f_color;\n"
-//                     "out vec4 color;\n"
-//                     "void main(void)\n"
-//                     "{\n"
-//                     "    color = f_color;\n"
-//                     "}\n";
