@@ -145,28 +145,9 @@ void MainOpenGLWidget::initializeMP()
 
     uint AvailableId = GetId();
 
-    B2Emitter *emitter = new Breakable(AvailableId, "Breakable"); m_emitters->add(emitter);
-    emitter->g_debugDraw = g_debugDraw;
-    emitter = new Figures(AvailableId, "Figures", &g_debugDraw); m_emitters->add(emitter);
-    emitter->g_debugDraw = g_debugDraw;
-//    emitter = new Tiles(AvailableId++, "Tiles"); m_emitters->add(emitter);
+    B2Emitter *emitter = new B2Emitter(AvailableId, "Figures", g_debugDraw); m_emitters->add(emitter);
 //    emitter->g_debugDraw = g_debugDraw;
-//    emitter = new VerticalStack(AvailableId++, "Vertical Stack"); m_emitters->add(emitter);
-//    emitter->g_debugDraw = g_debugDraw;
-//    emitter = new SphereStack(AvailableId++, "Sphere Stack"); m_emitters->add(emitter);
-//    emitter->g_debugDraw = g_debugDraw;
-//    emitter = new Tumbler(AvailableId++, "Tumbler"); m_emitters->add(emitter);
-//    emitter->g_debugDraw = g_debugDraw;
-//    emitter = new VaryingRestitution(AvailableId++, "Varying Restitution"); m_emitters->add(emitter);
-//    emitter->g_debugDraw = g_debugDraw;
-//    emitter = new Pyramid(AvailableId++, "Pyramid"); m_emitters->add(emitter);
-//    emitter->g_debugDraw = g_debugDraw;
-//    emitter = new CollisionFiltering(AvailableId++, "Collision Filtering"); m_emitters->add(emitter);
-//    emitter->g_debugDraw = g_debugDraw;
-//    emitter = new CollisionProcessing(AvailableId++, "Collision Processing"); m_emitters->add(emitter);
-//    emitter->g_debugDraw = g_debugDraw;
-//    emitter = new CompoundShapes(AvailableId++, "Compound Shapes"); m_emitters->add(emitter);
-//    emitter->g_debugDraw = g_debugDraw;
+
     MainWidget *widget = (MainWidget *)m_parent;
     widget->m_emittersList->setCurrentItemIndex(m_emitters->selectItem());
 }

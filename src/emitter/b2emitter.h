@@ -4,6 +4,7 @@
 #include "../debugdraw.h"
 #include "emitter.h"
 #include <Box2D/Box2D.h>
+#include <src/utils/floatrange.h>
 
 class B2Emitter;
 struct Settings;
@@ -83,87 +84,18 @@ struct TestEntry {
     TestCreateFcn *createFcn;
 };
 
-// This is called when a joint in the world is implicitly destroyed
-// because an attached body is destroyed. This gives us a chance to
-// nullify the mouse joint.
-class DestructionListener : public b2DestructionListener
-{
-public:
-    void SayGoodbye(b2Fixture *fixture) override
-    {
-        B2_NOT_USED(fixture);
-    }
-    void SayGoodbye(b2Joint *joint) override;
-
-    B2Emitter *test;
-};
-
 const int32 k_maxContactPoints = 2048;
 
-struct ContactPoint {
-    b2Fixture *fixtureA;
-    b2Fixture *fixtureB;
-    b2Vec2 normal;
-    b2Vec2 position;
-    b2PointState state;
-    float32 normalImpulse;
-    float32 tangentImpulse;
-    float32 separation;
-};
-
-class B2Emitter : public b2ContactListener, public Emitter
+class B2Emitter : public Emitter
 {
 public:
 
     B2Emitter();
-    B2Emitter(uint id, QString name);
+    B2Emitter(uint id, QString name, DebugDraw &debugDraw);
     virtual ~B2Emitter();
-
-    B2Emitter &operator=(const B2Emitter &from);
 
 //    void DrawTitle(const char *string);
     virtual void Step(Settings *settings);
-    virtual void Keyboard(int key)
-    {
-        B2_NOT_USED(key);
-    }
-    virtual void KeyboardUp(int key)
-    {
-        B2_NOT_USED(key);
-    }
-    void ShiftMouseDown(const b2Vec2 &p);
-    virtual void MouseDown(const b2Vec2 &p);
-    virtual void MouseUp(const b2Vec2 &p);
-    void MouseMove(const b2Vec2 &p);
-    void LaunchBomb();
-    void LaunchBomb(const b2Vec2 &position, const b2Vec2 &velocity);
-
-    void SpawnBomb(const b2Vec2 &worldPt);
-    void CompleteBombSpawn(const b2Vec2 &p);
-
-    // Let derived tests know that a joint was destroyed.
-    virtual void JointDestroyed(b2Joint *joint)
-    {
-        B2_NOT_USED(joint);
-    }
-
-    // Callbacks for derived classes.
-    virtual void BeginContact(b2Contact *contact)  override
-    {
-        B2_NOT_USED(contact);
-    }
-    virtual void EndContact(b2Contact *contact)  override
-    {
-        B2_NOT_USED(contact);
-    }
-    virtual void PreSolve(b2Contact *contact, const b2Manifold *oldManifold) override;
-    virtual void PostSolve(b2Contact *contact, const b2ContactImpulse *impulse) override
-    {
-        B2_NOT_USED(contact);
-        B2_NOT_USED(impulse);
-    }
-
-    void ShiftOrigin(const b2Vec2 &newOrigin);
 
     EmitterType GetType()
     {
@@ -197,29 +129,59 @@ public:
         m_name = name;
     }
 
+    void CreateObstacle(const b2PolygonShape shape);
+
+    void EnableTriangles();
+
+    void DisableTriangles();
+
+    void EnableCircles();
+
+    void DisableCircles();
+
+    void EnableRectangles();
+
+    void DisableRectangles();
+
+    void EnableEqualSize();
+
+    void DisableEqualSize();
+
+    FloatRange GetFiguresSize();
+
+    void SetFiguresSize(float leftBound, float rightBound);
+
+    uint GetMaxFiguresCount();
+
+    void SetMaxFiguresCount(uint count);
+
+    QColor GetColor();
+
+    void SetColor(const QColor &color);
+
+private:
+
+    b2Shape *CreateTriangle();
+
+    b2Shape *CreateCircle();
+
+    b2Shape *CreateRectangle();
+
+    uint m_maxFigures = 1000;
+    uint m_count = 0;
+
+    bool m_isEqualSize = true;
+
+    FloatRange m_size;
+
+    bool m_isTriangles = false;
+    bool m_isCircles = true;
+    bool m_isRectangles = false;
+
 protected:
-    friend class DestructionListener;
-    friend class BoundaryListener;
-    friend class ContactListener;
-
-    b2Body *m_groundBody;
-    b2AABB m_worldAABB;
-    ContactPoint m_points[k_maxContactPoints];
-    int32 m_pointCount;
-    DestructionListener m_destructionListener;
-    int32 m_textLine;
     b2World *m_world;
-    b2Body *m_bomb;
-    b2MouseJoint *m_mouseJoint;
-    b2Vec2 m_bombSpawnPoint;
-    bool m_bombSpawning;
-    b2Vec2 m_mouseWorld;
-    int32 m_stepCount;
-
-    b2Profile m_maxProfile;
-    b2Profile m_totalProfile;
-
     QString m_name;
+
 public:
     DebugDraw g_debugDraw;
     QPainter *m_painter;

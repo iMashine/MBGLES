@@ -1,47 +1,36 @@
 #include "b2emitter.h"
 
-void DestructionListener::SayGoodbye(b2Joint *joint)
-{
-    if (test->m_mouseJoint == joint) {
-        test->m_mouseJoint = NULL;
-    }
-    else {
-        test->JointDestroyed(joint);
-    }
-}
-
 B2Emitter::B2Emitter()
 {
     m_id = 0;
 }
 
-B2Emitter::B2Emitter(uint id, QString name)
+B2Emitter::B2Emitter(uint id, QString name, DebugDraw &debugDraw) :
+    m_isEqualSize(true),
+    m_isCircles(true),
+    m_isTriangles(false),
+    m_isRectangles(false)
 {
+    g_debugDraw = debugDraw;
+
     b2Vec2 gravity;
     gravity.Set(0.0f, -10.0f);
     m_world = new b2World(gravity);
-    m_bomb = NULL;
-    m_textLine = 30;
-    m_mouseJoint = NULL;
-    m_pointCount = 0;
-
-    m_destructionListener.test = this;
-    m_world->SetDestructionListener(&m_destructionListener);
-    m_world->SetContactListener(this);
     m_world->SetDebugDraw(&g_debugDraw);
-
-    m_bombSpawning = false;
-
-    m_stepCount = 0;
-
-    b2BodyDef bodyDef;
-    m_groundBody = m_world->CreateBody(&bodyDef);
-
-    memset(&m_maxProfile, 0, sizeof(b2Profile));
-    memset(&m_totalProfile, 0, sizeof(b2Profile));
-
     m_id = id;
     m_name = name;
+
+    float32 y = g_debugDraw.g_camera->ConvertScreenToWorld(b2Vec2(0, g_debugDraw.g_camera->m_height)).y,
+            x = g_debugDraw.g_camera->ConvertScreenToWorld(b2Vec2(g_debugDraw.g_camera->m_width, 0)).x;
+
+    b2PolygonShape obstacle;
+    obstacle.SetAsBox(25.0f, 2.0f, b2Vec2((x / 2),  10.0f), 0);
+
+    CreateObstacle(obstacle);
+
+    m_size = FloatRange(0.5f, 0.8f);
+
+    debugDraw.SetColor(Qt::darkCyan);
 }
 
 B2Emitter::~B2Emitter()
@@ -50,203 +39,6 @@ B2Emitter::~B2Emitter()
     delete m_world;
     m_world = NULL;
 //    g_debugDraw.Destroy();
-}
-
-B2Emitter &B2Emitter::operator=(const B2Emitter &from)
-{
-    uint id = m_id;
-    QString name = m_name;
-
-//    delete this;
-
-//    this = from;
-
-    this->m_id = id;
-    this->m_name = name;
-
-    return *this;
-}
-
-void B2Emitter::PreSolve(b2Contact *contact, const b2Manifold *oldManifold)
-{
-    const b2Manifold *manifold = contact->GetManifold();
-
-    if (manifold->pointCount == 0) {
-        return;
-    }
-
-    b2Fixture *fixtureA = contact->GetFixtureA();
-    b2Fixture *fixtureB = contact->GetFixtureB();
-
-    b2PointState state1[b2_maxManifoldPoints], state2[b2_maxManifoldPoints];
-    b2GetPointStates(state1, state2, oldManifold, manifold);
-
-    b2WorldManifold worldManifold;
-    contact->GetWorldManifold(&worldManifold);
-
-    for (int32 i = 0; i < manifold->pointCount && m_pointCount < k_maxContactPoints; ++i) {
-        ContactPoint *cp = m_points + m_pointCount;
-        cp->fixtureA = fixtureA;
-        cp->fixtureB = fixtureB;
-        cp->position = worldManifold.points[i];
-        cp->normal = worldManifold.normal;
-        cp->state = state2[i];
-        cp->normalImpulse = manifold->points[i].normalImpulse;
-        cp->tangentImpulse = manifold->points[i].tangentImpulse;
-        cp->separation = worldManifold.separations[i];
-        ++m_pointCount;
-    }
-}
-
-class QueryCallback : public b2QueryCallback
-{
-public:
-    QueryCallback(const b2Vec2 &point)
-    {
-        m_point = point;
-        m_fixture = NULL;
-    }
-
-    bool ReportFixture(b2Fixture *fixture) override
-    {
-        b2Body *body = fixture->GetBody();
-        if (body->GetType() == b2_dynamicBody) {
-            bool inside = fixture->TestPoint(m_point);
-            if (inside) {
-                m_fixture = fixture;
-
-                // We are done, terminate the query.
-                return false;
-            }
-        }
-
-        // Continue the query.
-        return true;
-    }
-
-    b2Vec2 m_point;
-    b2Fixture *m_fixture;
-};
-
-void B2Emitter::MouseDown(const b2Vec2 &p)
-{
-    m_mouseWorld = p;
-
-    if (m_mouseJoint != NULL) {
-        return;
-    }
-
-    // Make a small box.
-    b2AABB aabb;
-    b2Vec2 d;
-    d.Set(0.001f, 0.001f);
-    aabb.lowerBound = p - d;
-    aabb.upperBound = p + d;
-
-    // Query the world for overlapping shapes.
-    QueryCallback callback(p);
-    m_world->QueryAABB(&callback, aabb);
-
-    if (callback.m_fixture) {
-        b2Body *body = callback.m_fixture->GetBody();
-        b2MouseJointDef md;
-        md.bodyA = m_groundBody;
-        md.bodyB = body;
-        md.target = p;
-        md.maxForce = 1000.0f * body->GetMass();
-        m_mouseJoint = (b2MouseJoint *)m_world->CreateJoint(&md);
-        body->SetAwake(true);
-    }
-}
-
-void B2Emitter::SpawnBomb(const b2Vec2 &worldPt)
-{
-    m_bombSpawnPoint = worldPt;
-    m_bombSpawning = true;
-}
-
-void B2Emitter::CompleteBombSpawn(const b2Vec2 &p)
-{
-    if (m_bombSpawning == false) {
-        return;
-    }
-
-    const float multiplier = 30.0f;
-    b2Vec2 vel = m_bombSpawnPoint - p;
-    vel *= multiplier;
-    LaunchBomb(m_bombSpawnPoint, vel);
-    m_bombSpawning = false;
-}
-
-void B2Emitter::ShiftMouseDown(const b2Vec2 &p)
-{
-    m_mouseWorld = p;
-
-    if (m_mouseJoint != NULL) {
-        return;
-    }
-
-    SpawnBomb(p);
-}
-
-void B2Emitter::MouseUp(const b2Vec2 &p)
-{
-    if (m_mouseJoint) {
-        m_world->DestroyJoint(m_mouseJoint);
-        m_mouseJoint = NULL;
-    }
-
-    if (m_bombSpawning) {
-        CompleteBombSpawn(p);
-    }
-}
-
-void B2Emitter::MouseMove(const b2Vec2 &p)
-{
-    m_mouseWorld = p;
-
-    if (m_mouseJoint) {
-        m_mouseJoint->SetTarget(p);
-    }
-}
-
-void B2Emitter::LaunchBomb()
-{
-    b2Vec2 p(RandomFloat(-15.0f, 15.0f), 30.0f);
-    b2Vec2 v = -5.0f * p;
-    LaunchBomb(p, v);
-}
-
-void B2Emitter::LaunchBomb(const b2Vec2 &position, const b2Vec2 &velocity)
-{
-    if (m_bomb) {
-        m_world->DestroyBody(m_bomb);
-        m_bomb = NULL;
-    }
-
-    b2BodyDef bd;
-    bd.type = b2_dynamicBody;
-    bd.position = position;
-    bd.bullet = true;
-    m_bomb = m_world->CreateBody(&bd);
-    m_bomb->SetLinearVelocity(velocity);
-
-    b2CircleShape circle;
-    circle.m_radius = 0.3f;
-
-    b2FixtureDef fd;
-    fd.shape = &circle;
-    fd.density = 20.0f;
-    fd.restitution = 0.0f;
-
-    b2Vec2 minV = position - b2Vec2(0.3f, 0.3f);
-    b2Vec2 maxV = position + b2Vec2(0.3f, 0.3f);
-
-    b2AABB aabb;
-    aabb.lowerBound = minV;
-    aabb.upperBound = maxV;
-
-    m_bomb->CreateFixture(&fd);
 }
 
 void B2Emitter::Step(Settings *settings)
@@ -260,9 +52,6 @@ void B2Emitter::Step(Settings *settings)
         else {
             timeStep = 0.0f;
         }
-
-//        g_debugDraw.DrawString(m_painter, 5, m_textLine, "****PAUSED****");
-        m_textLine += DRAW_STRING_NEW_LINE;
     }
 
     uint32 flags = 0;
@@ -277,100 +66,225 @@ void B2Emitter::Step(Settings *settings)
     m_world->SetContinuousPhysics(settings->enableContinuous);
     m_world->SetSubStepping(settings->enableSubStepping);
 
-    m_pointCount = 0;
-
     m_world->Step(timeStep, settings->velocityIterations, settings->positionIterations);
 
     m_world->DrawDebugData();
     g_debugDraw.Flush();
 
-    if (timeStep > 0.0f) {
-        ++m_stepCount;
-    }
+    if (m_count < m_maxFigures) {
 
-    // Track maximum profile times
-    {
-        const b2Profile &p = m_world->GetProfile();
-        m_maxProfile.step = b2Max(m_maxProfile.step, p.step);
-        m_maxProfile.collide = b2Max(m_maxProfile.collide, p.collide);
-        m_maxProfile.solve = b2Max(m_maxProfile.solve, p.solve);
-        m_maxProfile.solveInit = b2Max(m_maxProfile.solveInit, p.solveInit);
-        m_maxProfile.solveVelocity = b2Max(m_maxProfile.solveVelocity, p.solveVelocity);
-        m_maxProfile.solvePosition = b2Max(m_maxProfile.solvePosition, p.solvePosition);
-        m_maxProfile.solveTOI = b2Max(m_maxProfile.solveTOI, p.solveTOI);
-        m_maxProfile.broadphase = b2Max(m_maxProfile.broadphase, p.broadphase);
+        b2Shape *shape;
 
-        m_totalProfile.step += p.step;
-        m_totalProfile.collide += p.collide;
-        m_totalProfile.solve += p.solve;
-        m_totalProfile.solveInit += p.solveInit;
-        m_totalProfile.solveVelocity += p.solveVelocity;
-        m_totalProfile.solvePosition += p.solvePosition;
-        m_totalProfile.solveTOI += p.solveTOI;
-        m_totalProfile.broadphase += p.broadphase;
-    }
-
-    if (m_mouseJoint) {
-        b2Vec2 p1 = m_mouseJoint->GetAnchorB();
-        b2Vec2 p2 = m_mouseJoint->GetTarget();
-
-        b2Color c;
-        c.Set(0.0f, 1.0f, 0.0f);
-        g_debugDraw.DrawPoint(p1, 4.0f, c);
-        g_debugDraw.DrawPoint(p2, 4.0f, c);
-
-        c.Set(0.8f, 0.8f, 0.8f);
-        g_debugDraw.DrawSegment(p1, p2, c);
-    }
-
-    if (m_bombSpawning) {
-        b2Color c;
-        c.Set(0.0f, 0.0f, 1.0f);
-        g_debugDraw.DrawPoint(m_bombSpawnPoint, 4.0f, c);
-
-        c.Set(0.8f, 0.8f, 0.8f);
-        g_debugDraw.DrawSegment(m_mouseWorld, m_bombSpawnPoint, c);
-    }
-
-    if (settings->drawContactPoints) {
-        const float32 k_impulseScale = 0.1f;
-        const float32 k_axisScale = 0.3f;
-
-        for (int32 i = 0; i < m_pointCount; ++i) {
-            ContactPoint *point = m_points + i;
-
-            if (point->state == b2_addState) {
-                // Add
-                g_debugDraw.DrawPoint(point->position, 10.0f, b2Color(0.3f, 0.95f, 0.3f));
+        if (m_isCircles && !m_isTriangles && !m_isRectangles) {
+            shape = CreateCircle();
+        }
+        else if (!m_isCircles && m_isTriangles && !m_isRectangles) {
+            shape = CreateTriangle();
+        }
+        else if (!m_isCircles && !m_isTriangles && m_isRectangles) {
+            shape = CreateRectangle();
+        }
+        else if (m_isCircles && m_isTriangles && !m_isRectangles) {
+            int what = rand() % 2 + 1;
+            shape = what == 1 ? CreateTriangle() : CreateCircle();
+        }
+        else if (m_isCircles && !m_isTriangles && m_isRectangles) {
+            int what = rand() % 2 + 1;
+            shape = what == 1 ? CreateRectangle() : CreateCircle();
+        }
+        else if (!m_isCircles && m_isTriangles && m_isRectangles) {
+            int what = rand() % 2 + 1;
+            shape = what == 1 ? CreateTriangle() : CreateRectangle();
+        }
+        else if (m_isCircles && m_isTriangles && m_isRectangles) {
+            int what = rand() % 3 + 1;
+            switch (what) {
+            case 1: {
+                shape = CreateTriangle();
+                break;
             }
-            else if (point->state == b2_persistState) {
-                // Persist
-                g_debugDraw.DrawPoint(point->position, 5.0f, b2Color(0.3f, 0.3f, 0.95f));
+            case 2: {
+                shape = CreateRectangle();
+                break;
             }
-
-            if (settings->drawContactNormals == 1) {
-                b2Vec2 p1 = point->position;
-                b2Vec2 p2 = p1 + k_axisScale * point->normal;
-                g_debugDraw.DrawSegment(p1, p2, b2Color(0.9f, 0.9f, 0.9f));
+            case 3: {
+                shape = CreateCircle();
+                break;
             }
-            else if (settings->drawContactImpulse == 1) {
-                b2Vec2 p1 = point->position;
-                b2Vec2 p2 = p1 + k_impulseScale * point->normalImpulse * point->normal;
-                g_debugDraw.DrawSegment(p1, p2, b2Color(0.9f, 0.9f, 0.3f));
-            }
-
-            if (settings->drawFrictionImpulse == 1) {
-                b2Vec2 tangent = b2Cross(point->normal, 1.0f);
-                b2Vec2 p1 = point->position;
-                b2Vec2 p2 = p1 + k_impulseScale * point->tangentImpulse * tangent;
-                g_debugDraw.DrawSegment(p1, p2, b2Color(0.9f, 0.9f, 0.3f));
             }
         }
+
+        b2FixtureDef fd;
+        fd.shape = shape;
+        fd.density = 1.0f;
+        fd.restitution = 0.4f;
+
+        float32 x1 = g_debugDraw.g_camera->ConvertScreenToWorld(b2Vec2(0, 0)).x,
+                x2 = g_debugDraw.g_camera->ConvertScreenToWorld(b2Vec2(g_debugDraw.g_camera->m_width, 0)).x;
+
+        float32 y = g_debugDraw.g_camera->ConvertScreenToWorld(b2Vec2(0, 0)).y;
+
+        float32 x = RandomFloat(x1, x2);
+        b2BodyDef bd;
+        bd.type = b2_dynamicBody;
+        bd.position.Set(x + 5.0f, y);
+//        bd.angle = RandomFloat(-b2_pi, b2_pi);
+        bd.linearDamping = 0.0f;
+        bd.angularDamping = 0.01f;
+        b2Body *body = m_world->CreateBody(&bd);
+        body->CreateFixture(&fd);
+        m_count++;
     }
 }
 
-void B2Emitter::ShiftOrigin(const b2Vec2 &newOrigin)
+b2Shape *B2Emitter::CreateTriangle()
 {
-    m_world->ShiftOrigin(newOrigin);
+    b2Transform xf1;
+    xf1.q.Set(0.3524f * b2_pi);
+    xf1.p = xf1.q.GetXAxis();
+
+    b2Vec2 vertices[3];
+
+    b2PolygonShape *triangle = new b2PolygonShape();
+
+    if (m_isEqualSize) {
+        float32 size = m_size.GetLeftBound();
+        vertices[0] = b2Mul(xf1, b2Vec2(size, -size));
+        vertices[1] = b2Mul(xf1, b2Vec2(-size, -size));
+        vertices[2] = b2Mul(xf1, b2Vec2(-size, size));
+        triangle->Set(vertices, 3);
+    }
+    else {
+        float32 size = RandomFloat(m_size.GetLeftBound(), m_size.GetRightBound());
+        vertices[0] = b2Mul(xf1, b2Vec2(size, -size));
+        vertices[1] = b2Mul(xf1, b2Vec2(-size, -size));
+        vertices[2] = b2Mul(xf1, b2Vec2(-size, size));
+        triangle->Set(vertices, 3);
+    }
+
+    return triangle;
 }
 
+b2Shape *B2Emitter::CreateCircle()
+{
+    b2CircleShape *circle = new b2CircleShape();
+
+    if (m_isEqualSize) {
+        float32 radius = m_size.GetLeftBound();
+        circle->m_radius = radius;
+        circle->m_p.Set(-1 * radius, radius);
+    }
+    else {
+        float32 radius = RandomFloat(m_size.GetLeftBound(), m_size.GetRightBound());
+        circle->m_radius = radius;
+        circle->m_p.Set(-1 * radius, radius);
+    }
+
+    return circle;
+}
+
+b2Shape *B2Emitter::CreateRectangle()
+{
+    b2PolygonShape *rectangle = new b2PolygonShape();
+    if (m_isEqualSize) {
+        float32 size = m_size.GetLeftBound();
+        rectangle->SetAsBox(size, size, b2Vec2(-1 * size, 0.0f), 0.0f);
+    }
+    else {
+        float32 size = RandomFloat(m_size.GetLeftBound(), m_size.GetRightBound());
+        rectangle->SetAsBox(size, size, b2Vec2(-1 * size, 0.0f), 0.0f);
+    }
+
+    return rectangle;
+}
+
+void B2Emitter::CreateObstacle(const b2PolygonShape shape)
+{
+    b2BodyDef bd;
+    bd.position.Set(0.0f, 0.0f);
+    b2Body *body = m_world->CreateBody(&bd);
+
+    int vertexCount = shape.GetVertexCount();
+    b2EdgeShape shapes[vertexCount];
+
+    for (int i = 0; i < vertexCount - 1; i++) {
+        shapes[i].Set(shape.GetVertex(i), shape.GetVertex(i + 1));
+    }
+
+    shapes[vertexCount - 1].Set(shape.GetVertex(vertexCount - 1), shape.GetVertex(0));
+
+    for (int i = 0; i < vertexCount; i++) {
+        body->CreateFixture(&shapes[i], 0.0f);
+    }
+}
+
+void B2Emitter::EnableTriangles()
+{
+    m_isTriangles = true;
+}
+
+void B2Emitter::DisableTriangles()
+{
+    m_isTriangles = false;
+}
+
+void B2Emitter::EnableCircles()
+{
+    m_isCircles = true;
+}
+
+void B2Emitter::DisableCircles()
+{
+    m_isCircles = false;
+}
+
+void B2Emitter::EnableRectangles()
+{
+    m_isRectangles = true;
+}
+
+void B2Emitter::DisableRectangles()
+{
+    m_isRectangles = false;
+}
+
+void B2Emitter::B2Emitter::EnableEqualSize()
+{
+    m_isEqualSize = true;
+}
+
+void B2Emitter::DisableEqualSize()
+{
+    m_isEqualSize = false;
+}
+
+FloatRange B2Emitter::GetFiguresSize()
+{
+    return m_size;
+}
+
+void B2Emitter::SetFiguresSize(float leftBound, float rightBound)
+{
+    m_size = FloatRange(leftBound, rightBound);
+}
+
+uint B2Emitter::GetMaxFiguresCount()
+{
+    return m_maxFigures;
+}
+
+void B2Emitter::SetMaxFiguresCount(uint count)
+{
+    m_maxFigures = count;
+}
+
+
+QColor B2Emitter::GetColor()
+{
+    return g_debugDraw.GetColor();
+}
+
+void B2Emitter::SetColor(const QColor &color)
+{
+    g_debugDraw.SetColor(color);
+}

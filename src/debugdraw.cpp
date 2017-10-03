@@ -32,7 +32,7 @@ void DebugDraw::DrawSolidPolygon(const b2Vec2 *vertices, int32 vertexCount, cons
 {
     b2Color fillColor;
 
-    fillColor = b2Color(mainColor.redF(), mainColor.greenF(), mainColor.blueF(), mainColor.alphaF());
+    fillColor = b2Color(m_mainColor.redF(), m_mainColor.greenF(), m_mainColor.blueF(), m_mainColor.alphaF());
 
     for (int32 i = 1; i < vertexCount - 1; ++i) {
         m_triangles->Vertex(vertices[0], fillColor);
@@ -55,7 +55,7 @@ void DebugDraw::DrawSolidCircle(const b2Vec2 &center, float32 radius, const b2Ve
 
     b2Color fillColor;
 
-    fillColor = b2Color(mainColor.redF(), mainColor.greenF(), mainColor.blueF(), mainColor.alphaF());
+    fillColor = b2Color(m_mainColor.redF(), m_mainColor.greenF(), m_mainColor.blueF(), m_mainColor.alphaF());
 
     for (int32 i = 0; i < k_segments; ++i) {
         // Perform rotation to avoid additional trigonometry.
@@ -74,4 +74,14 @@ void DebugDraw::DrawSolidCircle(const b2Vec2 &center, float32 radius, const b2Ve
 void DebugDraw::Flush()
 {
     m_triangles->Flush();
+}
+
+QColor DebugDraw::GetColor() const
+{
+    return m_mainColor;
+}
+
+void DebugDraw::SetColor(const QColor &value)
+{
+    m_mainColor = value;
 }

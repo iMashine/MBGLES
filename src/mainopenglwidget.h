@@ -4,7 +4,6 @@
 #include "emitter/mpemitter.h"
 #include "emitter/emitterlist.h"
 #include "emitter/b2emitter.h"
-#include "tests.h"
 #include "mainwidget.h"
 #include "shaderprogram.h"
 

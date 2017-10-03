@@ -30,12 +30,16 @@ public:
 
     void Flush();
 
+    QColor GetColor() const;
+
+    void SetColor(const QColor &color);
+
 private:
     RenderTriangles *m_triangles;
 
 public:
     Camera *g_camera;
-    QColor mainColor;
+    QColor m_mainColor;
 };
 
 #endif // DEBUGDRAW_H

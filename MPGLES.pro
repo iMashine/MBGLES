@@ -88,51 +88,35 @@ HEADERS += \
     include/Box2D/Dynamics/b2WorldCallbacks.h \
     include/Box2D/Rope/b2Rope.h \
     include/Box2D/Box2D.h \
-    include/Tests/Breakable.h \
-    include/Tests/CollisionFiltering.h \
-    include/Tests/CollisionProcessing.h \
-    include/Tests/CompoundShapes.h \
-    include/Tests/Pyramid.h \
-    include/Tests/SphereStack.h \
-    include/Tests/Tiles.h \
-    include/Tests/Tumbler.h \
-    include/Tests/VaryingRestitution.h \
-    include/Tests/VerticalStack.h \
+    src/emitter/b2emitter.h \
     src/emitter/emitter.h \
     src/emitter/emitterlist.h \
     src/emitter/emitterslistview.h \
     src/emitter/mpemitter.h \
     src/camera.h \
     src/debugdraw.h \
+     src/utils/floatrange.h \
     src/mainopenglwidget.h \
     src/mainwidget.h \
     src/ptextures.h \
-    src/renderlines.h \
-    src/renderpoints.h \
     src/rendertriangles.h \
-    src/shaderprogram.h \
-    src/tests.h \
-    src/emitter/b2emitter.h \
-    src/floatrange.h \
-    src/figures.h
+    src/shaderprogram.h
 
 SOURCES += \
     include/_core/mp.cpp \
     include/_core/platform_win_posix.cpp \
+    src/emitter/b2emitter.cpp \
     src/emitter/emitterlist.cpp \
     src/emitter/emitterslistview.cpp \
     src/emitter/mpemitter.cpp \
     src/camera.cpp \
     src/debugdraw.cpp \
+    src/utils/floatrange.cpp \
     src/main.cpp \
     src/mainopenglwidget.cpp \
     src/mainwidget.cpp \
     src/ptextures.cpp \
-    src/renderlines.cpp \
-    src/renderpoints.cpp \
     src/rendertriangles.cpp \
-    src/shaderprogram.cpp \
-    src/emitter/b2emitter.cpp \
-    src/floatrange.cpp \
-    src/figures.cpp
+    src/shaderprogram.cpp
+
 
