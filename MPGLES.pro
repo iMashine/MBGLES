@@ -100,7 +100,8 @@ HEADERS += \
     src/mainwidget.h \
     src/ptextures.h \
     src/rendertriangles.h \
-    src/shaderprogram.h
+    src/shaderprogram.h \
+    src/mainopengloffscreensurface.h
 
 SOURCES += \
     include/_core/mp.cpp \
@@ -117,6 +118,7 @@ SOURCES += \
     src/mainwidget.cpp \
     src/ptextures.cpp \
     src/rendertriangles.cpp \
-    src/shaderprogram.cpp
+    src/shaderprogram.cpp \
+    src/mainopengloffscreensurface.cpp
 
 

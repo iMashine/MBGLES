@@ -22,6 +22,9 @@
 #include <QSlider>
 #include <QColor>
 #include <QColorDialog>
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QBasicTimer>
 
 class MainWidget : public QWidget
 {
@@ -29,6 +32,10 @@ class MainWidget : public QWidget
 
 public:
     MainWidget(QWidget *parent = 0);
+
+    void Screenshot();
+
+    void CreateUI();
 
     ~MainWidget();
 
@@ -40,7 +47,15 @@ public:
 
     void mouseMoveEvent(QMouseEvent *event) override;
 
+    void timerEvent(QTimerEvent *e) override;
+
+    void paintEvent(QPaintEvent *event) override;
+
     MainOpenGLWidget *m_mainOpenGLWidget = nullptr;
+
+    QGraphicsScene *m_scene;
+    QGraphicsView *m_hiddenView;
+    QOpenGLContext *m_context;
 
     QGroupBox *m_mainMenu = nullptr;
     QVBoxLayout *m_mainMenuLayout = nullptr;
@@ -73,6 +88,10 @@ private:
 
     // вес
     QSlider *m_particlesWeightSettingSlider;
+
+    bool isCreatedInterface = false;
+
+    QBasicTimer timer;
 };
 
 #endif // MAINWIDGET_H

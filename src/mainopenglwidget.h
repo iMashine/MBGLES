@@ -4,6 +4,7 @@
 #include "emitter/mpemitter.h"
 #include "emitter/emitterlist.h"
 #include "emitter/b2emitter.h"
+#include "mainopengloffscreensurface.h"
 #include "mainwidget.h"
 #include "shaderprogram.h"
 
@@ -20,7 +21,7 @@
 
 typedef unsigned int uint;
 
-class MainOpenGLWidget : protected QOpenGLWidget, protected QOpenGLFunctions
+class MainOpenGLWidget : public MainOpenGLOffscreenSurface
 {
 public:
     MainOpenGLWidget(MainWidget *parent = Q_NULLPTR);
@@ -36,21 +37,21 @@ public:
 
     int GetWidth()
     {
-        return width();
+        return bufferSize().width();
     }
 
     int GetHeight()
     {
-        return height();
+        return bufferSize().height();
     }
 
-
+    void Update();
 
 protected:
     void initializeGL() override;
     void resizeGL(int w, int h) override;
     void paintGL() override;
-    void timerEvent(QTimerEvent *e) override;
+    void timerEvent(QTimerEvent *e);
 
     void initializeMP();
     uint GetId();
@@ -58,14 +59,13 @@ protected:
     void keyPressEvent(QKeyEvent *e);
 
 private:
-    QBasicTimer timer;
     QMatrix4x4 m_projection;
 
     MP_Device *m_device;
     MP_Manager *m_manager;
 
     ShaderProgram m_program;
-    QOpenGLFunctions m_functions;
+//    QOpenGLFunctions m_functions;
     MainWidget *m_parent = Q_NULLPTR;
 
     QOpenGLPaintDevice *m_mainGLPaintDevice = nullptr;
@@ -82,6 +82,8 @@ private:
 
     Settings settings;
 
+    bool m_isInitialized = false;
+
 public:
     float *m_vertices;
     unsigned char *m_colors;
@@ -90,6 +92,7 @@ public:
 
     DebugDraw g_debugDraw;
     Camera *g_camera;
+
 
 };
 
