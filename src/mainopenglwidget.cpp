@@ -1,12 +1,14 @@
 #include "mainopenglwidget.h"
 #include "mainwidget.h"
 
+#include <QString>
+
 MainOpenGLWidget::MainOpenGLWidget(MainWidget *parent)
 {
     m_emitters = new EmitterList(Q_NULLPTR);
     m_parent = parent;
     MPEmitter::m_widget = this;
-    setFocusPolicy(Qt::StrongFocus);
+//    setFocusPolicy(Qt::StrongFocus);
 }
 
 MainOpenGLWidget::~MainOpenGLWidget()
@@ -49,8 +51,8 @@ void MainOpenGLWidget::Draw(int starting_index, int indexes_count, int max_verti
 {
     m_program.bind();
 
-    float screenscale_x = 2.f / (float)width();
-    float screenscale_y = 2.f / (float)height();
+    float screenscale_x = 2.f / (float)GetWidth();
+    float screenscale_y = 2.f / (float)GetHeight();
 
     m_program.setUniformValue(m_program.uniform_screenscale, QPointF(screenscale_x, screenscale_y));
     m_program.setUniformValue(m_program.uniform_sampler, 0);
@@ -64,7 +66,13 @@ void MainOpenGLWidget::Draw(int starting_index, int indexes_count, int max_verti
     m_program.enableAttributeArray(QOpenGLShaderProgramAttribute::QOpenGLShaderProgramAttributeTexturePosition);
     m_program.setAttributeArray(QOpenGLShaderProgramAttribute::QOpenGLShaderProgramAttributeTexturePosition, GL_FLOAT, m_textureCoords, 2);
 
-    m_functions.glDrawElements(GL_TRIANGLES, indexes_count, GL_UNSIGNED_SHORT, m_indexes);
+    functions()->glDrawElements(GL_TRIANGLES, indexes_count, GL_UNSIGNED_SHORT, m_indexes);
+}
+
+void MainOpenGLWidget::Update()
+{
+    m_manager->UpdateByTimer();
+    update();
 }
 
 uint MainOpenGLWidget::GetId()
@@ -84,28 +92,32 @@ uint MainOpenGLWidget::GetId()
 
 void MainOpenGLWidget::initializeGL()
 {
-    makeCurrent();
-    m_functions.initializeOpenGLFunctions();
-    m_functions.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    functions()->initializeOpenGLFunctions();
+    functions()->glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
     m_program.Create();
 
-    g_camera = new Camera(this->width(), this->height());
+    g_camera = new Camera(GetWidth(), GetHeight());
 
-    g_debugDraw.Create(g_camera, &m_functions);
+    g_debugDraw.Create(g_camera, functions());
 
     initializeMP();
-    timer.start(12, this);
+
+    m_isInitialized = true;
 }
 
 void MainOpenGLWidget::initializeMP()
 {
-    m_device = new MP_Device(width(), height());
+    int width = GetWidth();
+    int height = GetHeight();
+
+    m_device = new MP_Device(width, height);
     m_device->Create();
 
     m_manager = &MP_Manager::GetInstance();
     m_manager->device = m_device;
     m_manager->m_program = &m_program;
-    m_manager->m_functions = &m_functions;
+    m_manager->m_functions = functions();
     m_manager->m_textures = &m_textures;
 
     MP_Platform *platform = new MP_Platform_WIN_POSIX;
@@ -137,8 +149,6 @@ void MainOpenGLWidget::initializeMP()
         Emitter *addEmitter = m_manager->GetEmitter(hmEmitter);
         m_emitters->add(addEmitter);
         occupiedIdentificatos.append(addEmitter->GetId());
-        int width = this->width();
-        int height = this->height();
         Magic_CorrectEmitterPosition(hmEmitter, width, height);
         hmEmitter = m_manager->GetNextEmitter(hmEmitter);
     }
@@ -150,18 +160,21 @@ void MainOpenGLWidget::initializeMP()
 
     MainWidget *widget = (MainWidget *)m_parent;
     widget->m_emittersList->setCurrentItemIndex(m_emitters->selectItem());
+    m_emitters->selectItem(m_emitters->index(0, 0));
 }
 
 // ?
 void MainOpenGLWidget::resizeGL(int w, int h)
 {
-    qreal aspect = qreal(w) / qreal(h ? h : 1);
-    const qreal zNear = 3.0, zFar = 7.0, fov = 45.0;
-    m_projection.setToIdentity();
-    m_projection.perspective(fov, aspect, zNear, zFar);
+    if (m_isInitialized) {
+        qreal aspect = qreal(w) / qreal(h ? h : 1);
+        const qreal zNear = 3.0, zFar = 7.0, fov = 45.0;
+        m_projection.setToIdentity();
+        m_projection.perspective(fov, aspect, zNear, zFar);
 
-    m_device->window_width = w;
-    m_device->window_height = h;
+        m_device->window_width = w;
+        m_device->window_height = h;
+    }
 }
 
 void MainOpenGLWidget::timerEvent(QTimerEvent *e)
@@ -169,7 +182,6 @@ void MainOpenGLWidget::timerEvent(QTimerEvent *e)
     Q_UNUSED(e)
 
     m_manager->UpdateByTimer();
-
     update();
 }
 
@@ -212,16 +224,17 @@ void MainOpenGLWidget::keyPressEvent(QKeyEvent *e)
 
 void MainOpenGLWidget::paintGL()
 {
-    makeCurrent();
+    functions()->glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    functions()->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    m_functions.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    m_functions.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    QOpenGLPaintDevice *device = ((QOpenGLPaintDevice *)getPaintDevice());
 
-    if (!m_painter || m_painter->window().width() != width() ||
-            m_painter->window().height() != height()) {
-        delete m_painter;
-        m_mainGLPaintDevice = new QOpenGLPaintDevice(width(), height());
-        m_painter = new QPainter(m_mainGLPaintDevice);
+    if (device->size() != bufferSize()) {
+        device->setSize(bufferSize());
+        m_painter = new QPainter(device);
+    }
+    if (!m_painter) {
+        m_painter = new QPainter(device);
     }
 
     m_painter->beginNativePainting();
@@ -235,7 +248,6 @@ void MainOpenGLWidget::paintGL()
             emitter->g_debugDraw = this->g_debugDraw;
             emitter->m_painter = this->m_painter;
             emitter->Step(&settings);
-//            emitter->DrawTitle(emitter->GetEmitterName().toLatin1().data());
         }
     }
 

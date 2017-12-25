@@ -1,9 +1,21 @@
+#include "mainopengloffscreensurface.h"
 #include "mainwidget.h"
+
+#include <QOpenGLFramebufferObjectFormat>
+#include <windows.h>
 
 MainWidget::MainWidget(QWidget *parent)
     : QWidget(parent)
 {
+    CreateUI();
+    timer.start(12, this);
+}
+
+void MainWidget::CreateUI()
+{
     m_mainOpenGLWidget = new MainOpenGLWidget(this);
+    m_mainOpenGLWidget->resize(800, 600);
+    m_mainOpenGLWidget->render();
     m_mainMenu = new QGroupBox("Меню");
     m_mainMenuLayout = new QVBoxLayout();
     m_mainLayout = new QSplitter(this);
@@ -163,8 +175,12 @@ MainWidget::MainWidget(QWidget *parent)
 
     m_mainMenu->setLayout(m_mainMenuLayout);
 
-    m_mainLayout->addWidget(m_mainOpenGLWidget);
+    QWidget *widget = new QWidget();
+    widget->resize(800, 600);
+    m_mainLayout->addWidget(widget);
     m_mainLayout->addWidget(m_mainMenu);
+
+    isCreatedInterface = true;
 }
 
 MainWidget::~MainWidget()
@@ -174,53 +190,81 @@ MainWidget::~MainWidget()
 
 void MainWidget::resizeEvent(QResizeEvent *event)
 {
-    m_mainLayout->resize(event->size());
+    if (isCreatedInterface) {
+        m_mainLayout->resize(event->size());
+    }
 }
 
 void MainWidget::mousePressEvent(QMouseEvent *event)
 {
-    m_currentEmitter = -1;
+    if (isCreatedInterface) {
+        m_currentEmitter = -1;
 
-    if (m_emittersList->selection() != Q_NULLPTR) {
-        if (m_mainOpenGLWidget->GetEmitters()->first() != Q_NULLPTR) {
-            MPEmitter *emitter = (MPEmitter *)m_mainOpenGLWidget->GetEmitters()->first();
-            MPEmitter *firstEmitter = (MPEmitter *)m_mainOpenGLWidget->GetEmitters()->first();
+        if (m_emittersList->selection() != Q_NULLPTR) {
+            if (m_mainOpenGLWidget->GetEmitters()->first() != Q_NULLPTR) {
+                MPEmitter *emitter = (MPEmitter *)m_mainOpenGLWidget->GetEmitters()->first();
+                MPEmitter *firstEmitter = (MPEmitter *)m_mainOpenGLWidget->GetEmitters()->first();
 
-            do {
-                if (emitter->Contains(event->pos())) {
-                    m_currentEmitter = emitter->GetId();
-                    break;
+                do {
+                    if (emitter->Contains(event->pos())) {
+                        m_currentEmitter = emitter->GetId();
+                        break;
+                    }
+                    emitter = (MPEmitter *)m_mainOpenGLWidget->GetEmitters()->next();
                 }
-                emitter = (MPEmitter *)m_mainOpenGLWidget->GetEmitters()->next();
-            }
-            while (emitter != firstEmitter);
+                while (emitter != firstEmitter);
 
+            }
         }
     }
+
+
 }
 
 void MainWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-    m_currentEmitter = -1;
+    if (isCreatedInterface) {
+        m_currentEmitter = -1;
+    }
 }
 
 void MainWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    if (m_currentEmitter != -1) {
-        ((MPEmitter *)m_mainOpenGLWidget->GetEmitters()->get(m_currentEmitter))->
-        SetPosition(QPointF(event->pos().x(), m_mainOpenGLWidget->GetHeight() - event->pos().y()));
+    if (isCreatedInterface) {
+        if (m_currentEmitter != -1) {
+            ((MPEmitter *)m_mainOpenGLWidget->GetEmitters()->get(m_currentEmitter))->
+            SetPosition(QPointF(event->pos().x(), m_mainOpenGLWidget->GetHeight() - event->pos().y()));
+        }
     }
+}
+
+void MainWidget::timerEvent(QTimerEvent *e)
+{
+    update();
+}
+
+void MainWidget::paintEvent(QPaintEvent *event)
+{
+    m_mainOpenGLWidget->Update();
+    QPainter painter;
+    painter.begin(this);
+    QRectF target(0.0, 0.0, 800.0, 600.0);
+    QRectF source(0.0, 0.0, 800.0, 600.0);
+    QImage image = m_mainOpenGLWidget->grabFramebuffer();
+    painter.drawImage(target, image, source);
 }
 
 void MainWidget::refreshUI()
 {
-    if (m_emittersList->selection() != Q_NULLPTR) {
-        m_currentEmitter = m_emittersList->selection()->GetId();
-        m_particlesSpeedSettingSlider->setValue(m_emittersList->selection()->GetParticlesSpeed());
-        m_particlesSizeSettingSlider->setValue(m_emittersList->selection()->GetParticlesSize());
-        m_particlesSaturationSettingSlider->setValue(m_emittersList->selection()->GetParticlesSaturation());
+    if (isCreatedInterface) {
+        if (m_emittersList->selection() != Q_NULLPTR) {
+            m_currentEmitter = m_emittersList->selection()->GetId();
+            m_particlesSpeedSettingSlider->setValue(m_emittersList->selection()->GetParticlesSpeed());
+            m_particlesSizeSettingSlider->setValue(m_emittersList->selection()->GetParticlesSize());
+            m_particlesSaturationSettingSlider->setValue(m_emittersList->selection()->GetParticlesSaturation());
 //        m_particlesLifeSettingSlider->setValue(m_emittersList->selection()->GetParticlesLife());
 //        m_particlesWeightSettingSlider->setValue(m_emittersList->selection()->GetParticlesWeight());
+        }
+        m_currentEmitter = -1;
     }
-    m_currentEmitter = -1;
 }
