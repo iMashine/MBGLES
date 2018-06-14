@@ -26,18 +26,29 @@
 #include <QGraphicsView>
 #include <QBasicTimer>
 
+/// mainwidget of application
+/// this widget will show controllers and paint effects on paint surface (openglsurface)
 class MainWidget : public QWidget
 {
     Q_OBJECT
 
 public:
+
+    /// fucntions block
+    ///
+
     MainWidget(QWidget *parent = 0);
 
     void Screenshot();
 
     void CreateUI();
 
+    void refreshUI();
+
     ~MainWidget();
+
+    /// events block
+    ///
 
     void resizeEvent(QResizeEvent *event) override;
 
@@ -51,6 +62,10 @@ public:
 
     void paintEvent(QPaintEvent *event) override;
 
+    /// members block
+    ///
+
+    // opengl surface when will be proccess render
     MainOpenGLWidget *m_mainOpenGLWidget = nullptr;
 
     QGraphicsScene *m_scene;
@@ -60,34 +75,29 @@ public:
     QGroupBox *m_mainMenu = nullptr;
     QVBoxLayout *m_mainMenuLayout = nullptr;
 
-    // список эмиттеров
     EmittersListView *m_emittersList = nullptr;
 
-    // список препятствий
     QListView *m_obstaclesList = nullptr;
 
     QSplitter *m_mainLayout = nullptr;
-
-    void refreshUI();
 
     unsigned int m_currentEmitter = false;
 
 private:
 
-    // скорость
     QSlider *m_particlesSpeedSettingSlider;
 
-    // размер
     QSlider *m_particlesSizeSettingSlider;
 
-    // насыщенность
     QSlider *m_particlesSaturationSettingSlider;
 
-    // время жизни
     QSlider *m_particlesLifeSettingSlider;
 
-    // вес
     QSlider *m_particlesWeightSettingSlider;
+
+    QSlider *m_particlesTransparencySettingSlider;
+
+    QPushButton *m_particlesColorSettingButton;
 
     bool isCreatedInterface = false;
 

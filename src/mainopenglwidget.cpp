@@ -8,7 +8,6 @@ MainOpenGLWidget::MainOpenGLWidget(MainWidget *parent)
     m_emitters = new EmitterList(Q_NULLPTR);
     m_parent = parent;
     MPEmitter::m_widget = this;
-//    setFocusPolicy(Qt::StrongFocus);
 }
 
 MainOpenGLWidget::~MainOpenGLWidget()

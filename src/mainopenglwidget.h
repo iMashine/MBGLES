@@ -65,16 +65,12 @@ private:
     MP_Manager *m_manager;
 
     ShaderProgram m_program;
-//    QOpenGLFunctions m_functions;
     MainWidget *m_parent = Q_NULLPTR;
 
     QOpenGLPaintDevice *m_mainGLPaintDevice = nullptr;
     QPainter *m_painter = nullptr;
 
     TextureList m_textures;
-
-
-//    QList<QOpenGLTexture *> m_textures;
 
     EmitterList *m_emitters;
 
@@ -92,8 +88,6 @@ public:
 
     DebugDraw g_debugDraw;
     Camera *g_camera;
-
-
 };
 
 #endif // MAINOPENGLWIDGET_H

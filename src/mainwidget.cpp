@@ -88,48 +88,50 @@ void MainWidget::CreateUI()
         m_mainMenuLayout->addWidget(speedSetting);
     }
 
-    /// меню настройки время жизни частиц
+    /// меню настройки прозрачности частиц
     {
-        m_particlesLifeSettingSlider = new QSlider(Qt::Horizontal);
-        m_particlesLifeSettingSlider->setMinimum(1);
-        m_particlesLifeSettingSlider->setMaximum(100);
-        m_particlesLifeSettingSlider->setTickPosition(QSlider::TicksLeft);
+        m_particlesTransparencySettingSlider = new QSlider(Qt::Horizontal);
+        m_particlesTransparencySettingSlider->setMinimum(1);
+        m_particlesTransparencySettingSlider->setMaximum(100);
+        m_particlesTransparencySettingSlider->setTickPosition(QSlider::TicksLeft);
 
-        connect(m_particlesLifeSettingSlider, &QSlider::valueChanged, [ = ](const int newValue) {
+        connect(m_particlesTransparencySettingSlider, &QSlider::valueChanged, [ = ](const int newValue) {
             if (m_emittersList->selection() != Q_NULLPTR) {
-//                m_emittersList->selection()->SetParticlesLife(newValue);
+                m_emittersList->selection()->SetParticlesTransparency(newValue);
             }
         });
 
-        QHBoxLayout *settingsLifeLayout = new QHBoxLayout();
-        settingsLifeLayout->addWidget(m_particlesLifeSettingSlider);
+        QHBoxLayout *settingsTransparencyLayout = new QHBoxLayout();
+        settingsTransparencyLayout->addWidget(m_particlesTransparencySettingSlider);
 
-        QGroupBox *lifeSetting = new QGroupBox("Время жизни");
-        lifeSetting->setLayout(settingsLifeLayout);
+        QGroupBox *transparencySetting = new QGroupBox("Прозрачность");
+        transparencySetting->setLayout(settingsTransparencyLayout);
 
-        m_mainMenuLayout->addWidget(lifeSetting);
+        m_mainMenuLayout->addWidget(transparencySetting);
     }
 
-    /// меню настройки веса частиц
+    /// меню настройки цвета эффекта
     {
-        m_particlesWeightSettingSlider = new QSlider(Qt::Horizontal);
-        m_particlesWeightSettingSlider->setMinimum(1);
-        m_particlesWeightSettingSlider->setMaximum(100);
-        m_particlesWeightSettingSlider->setTickPosition(QSlider::TicksLeft);
+        m_particlesColorSettingButton = new QPushButton();
 
-        connect(m_particlesWeightSettingSlider, &QSlider::valueChanged, [ = ](const int newValue) {
-            if (m_emittersList->selection() != Q_NULLPTR) {
-//                m_emittersList->selection()->SetParticlesWeight(newValue);
+        connect(m_particlesColorSettingButton, &QPushButton::clicked, [ = ] {
+            QColor m_currentColor = QColorDialog::getColor();
+
+            QString qss = QString("background-color: %1").arg(m_currentColor.name());
+            m_particlesColorSettingButton->setStyleSheet(qss);
+
+            if (m_emittersList->selection() != Q_NULLPTR)
+            {
+                int color;
+                color = m_currentColor.alpha();
+                color = (color << 8) + m_currentColor.blue();
+                color = (color << 8) + m_currentColor.green();
+                color = (color << 8) + m_currentColor.red();
+                m_emittersList->selection()->SetParticlesColor(color);
             }
         });
 
-        QHBoxLayout *settingsWeightLayout = new QHBoxLayout();
-        settingsWeightLayout->addWidget(m_particlesWeightSettingSlider);
-
-        QGroupBox *weightSetting = new QGroupBox("Вес");
-        weightSetting->setLayout(settingsWeightLayout);
-
-        m_mainMenuLayout->addWidget(weightSetting);
+        m_mainMenuLayout->addWidget(m_particlesColorSettingButton);
     }
 
     /// меню работы с эмиттерами
@@ -171,7 +173,6 @@ void MainWidget::CreateUI()
 
         m_mainMenuLayout->addWidget(fillTypeSetting);
     }
-
 
     m_mainMenu->setLayout(m_mainMenuLayout);
 
@@ -217,8 +218,6 @@ void MainWidget::mousePressEvent(QMouseEvent *event)
             }
         }
     }
-
-
 }
 
 void MainWidget::mouseReleaseEvent(QMouseEvent *event)
@@ -262,9 +261,21 @@ void MainWidget::refreshUI()
             m_particlesSpeedSettingSlider->setValue(m_emittersList->selection()->GetParticlesSpeed());
             m_particlesSizeSettingSlider->setValue(m_emittersList->selection()->GetParticlesSize());
             m_particlesSaturationSettingSlider->setValue(m_emittersList->selection()->GetParticlesSaturation());
-//        m_particlesLifeSettingSlider->setValue(m_emittersList->selection()->GetParticlesLife());
-//        m_particlesWeightSettingSlider->setValue(m_emittersList->selection()->GetParticlesWeight());
-        }
-        m_currentEmitter = -1;
+            m_particlesTransparencySettingSlider->setValue(m_emittersList->selection()->GetParticlesTransparency());
+
+            QColor m_currentColor = m_emittersList->selection()->GetParticlesColor();
+
+            int color;
+            color = m_currentColor.alpha();
+            color = (color << 8) + m_currentColor.blue();
+            color = (color << 8) + m_currentColor.green();
+            color = (color << 8) + m_currentColor.red();
+
+            m_currentColor = QColor(color);
+
+            QString qss = QString("background-color: %1").arg(m_currentColor.name());
+            m_particlesColorSettingButton->setStyleSheet(qss);
+        };
     }
+    m_currentEmitter = -1;
 }

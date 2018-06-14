@@ -107,6 +107,7 @@ public:
         return m_name;
     }
 
+    // todo need implement this methods
     void SetParticlesSpeed(uint value) {  }
 
     uint GetParticlesSpeed() {  }
@@ -118,6 +119,14 @@ public:
     void SetParticlesSaturation(uint value) {  }
 
     uint GetParticlesSaturation() {  }
+
+    void SetParticlesColor(uint value) { }
+
+    uint GetParticlesColor() { }
+
+    void SetParticlesTransparency(uint value) { }
+
+    uint GetParticlesTransparency() { }
 
     void SetId(uint id)
     {

@@ -316,44 +316,11 @@ unsigned int MPEmitter::Render()
                             GLuint tex = atlas->GetTexture();
                             STAGE *stage = &(m_stages[state.index]);
                             stage->texture = state.value;
-//                            m_manager->m_textures->GetTexture(tex)->bind();
-//                            if (atlas->address_u != stage->address_u) {
-//                                atlas->address_u = stage->address_u;
-//                                m_manager->m_textures->GetTexture(tex)->setWrapMode(QOpenGLTexture::DirectionS, QOpenGLTextureWrapMode[stage->address_u]);
-//                            }
-//                            if (atlas->address_v != stage->address_v) {
-//                                atlas->address_v = stage->address_v;
-//                            m_manager->m_textures->GetTexture(tex)->setWrapMode(QOpenGLTexture::DirectionT, QOpenGLTextureWrapMode[stage->address_v]);
-//                            }
                             m_manager->m_textures->GetTexture(tex)->bind();
                             QOpenGLTexture::WrapMode mode = QOpenGLTextureWrapMode[0];
                             m_manager->m_textures->GetTexture(tex)->setWrapMode(QOpenGLTexture::DirectionS, mode);
                             m_manager->m_textures->GetTexture(tex)->setWrapMode(QOpenGLTexture::DirectionT, mode);
                         }
-//                        else if (state.state == MAGIC_RENDER_STATE_ADDRESS_U) {
-//                            STAGE *stage = &(m_stages[state.index]);
-//                            if (stage->texture != -1) {
-//                                MP_Atlas *atlas = (MP_Atlas *)MP_Manager::GetInstance().GetAtlas(stage->texture);
-//                                if (atlas->address_u != state.value) {
-//                                    atlas->address_u = state.value;
-//                                    m_manager->m_textures->at(stage->texture).bind();
-//                                    m_manager->m_textures->at(stage->texture).setWrapMode(QOpenGLTexture::DirectionS, QOpenGLTextureWrapMode[state.value]);
-//                                }
-//                            }
-//                            stage->address_u = state.value;
-//                        }
-//                        else if (state.state == MAGIC_RENDER_STATE_ADDRESS_V) {
-//                            STAGE *stage = &(m_stages[state.index]);
-//                            if (stage->texture != -1) {
-//                                MP_Atlas *atlas = (MP_Atlas *)MP_Manager::GetInstance().GetAtlas(stage->texture);
-//                                if (atlas->address_v != state.value) {
-//                                    atlas->address_v = state.value;
-//                                    m_manager->m_textures->at(stage->texture).bind();
-//                                    m_manager->m_textures->at(stage->texture).setWrapMode(QOpenGLTexture::DirectionT, QOpenGLTextureWrapMode[state.value]);
-//                                }
-//                            }
-//                            stage->address_v = state.value;
-//                        }
                     }
                     m_widget->Draw(vrts.starting_index, vrts.indexes_count, vertex_info.length);
                 }
@@ -453,6 +420,29 @@ void MPEmitter::SetParticlesWeight(unsigned int value)
 unsigned int MPEmitter::GetParticlesWeight()
 {
     return this->GetParticleParameter(MAGIC_DIAGRAM_WEIGHT);
+}
+
+// todo need implement this methods
+void MPEmitter::SetParticlesColor(uint value)
+{
+    Magic_SetColorMode(m_id, MAGIC_COLOR_TINT);
+    Magic_SetTint(m_id, value);
+}
+
+uint MPEmitter::GetParticlesColor()
+{
+    Magic_SetColorMode(m_id, MAGIC_COLOR_TINT);
+    return Magic_GetTint(m_id);
+}
+
+void MPEmitter::SetParticlesTransparency(uint value)
+{
+    this->SetParticlesParameter(MAGIC_DIAGRAM_VISIBILITY, value);
+}
+
+uint MPEmitter::GetParticlesTransparency()
+{
+    return this->GetParticleParameter(MAGIC_DIAGRAM_VISIBILITY);
 }
 
 unsigned int MPEmitter::GetParticleParameter(MAGIC_DIAGRAM_ENUM parameter)

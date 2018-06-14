@@ -106,6 +106,14 @@ public:
 
     void SetParticlesParameter(MAGIC_DIAGRAM_ENUM parameter, unsigned int value);
 
+    void SetParticlesColor(uint value);
+
+    uint GetParticlesColor();
+
+    void SetParticlesTransparency(uint value);
+
+    uint GetParticlesTransparency();
+
 protected:
 
     unsigned int state;
@@ -114,12 +122,12 @@ protected:
     STAGE m_stages[16];
     bool first_restart; // признак того, что эмиттер еще не выставлялся на стартовую позицию анимации
 
-
 public:
     bool is_atlas;              // признак того, что атлас для данного эмиттера уже был построен
     std::string restore_file;   // файл для восстановления текстур эмиттера
     static bool temporary_emitter_modes[32];
     static MainOpenGLWidget *m_widget;
+    QColor m_currentColor = QColor::fromRgba(Qt::black);
 };
 
 #endif // MPEMITTER_H

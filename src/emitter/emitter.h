@@ -37,6 +37,14 @@ public:
 
     virtual uint GetParticlesSaturation() = 0;
 
+    virtual void SetParticlesColor(uint value) = 0;
+
+    virtual uint GetParticlesColor() = 0;
+
+    virtual void SetParticlesTransparency(uint value) = 0;
+
+    virtual uint GetParticlesTransparency() = 0;
+
 protected:
     uint m_id;
 };

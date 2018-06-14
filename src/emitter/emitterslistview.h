@@ -8,6 +8,7 @@
 
 class MainWidget;
 
+// вьюха отображающая список эмиттеров
 class EmittersListView : public QListView
 {
     Q_OBJECT
