@@ -23,14 +23,14 @@ B2Emitter::B2Emitter(uint id, QString name, DebugDraw &debugDraw) :
     float32 y = g_debugDraw.g_camera->ConvertScreenToWorld(b2Vec2(0, g_debugDraw.g_camera->m_height)).y,
             x = g_debugDraw.g_camera->ConvertScreenToWorld(b2Vec2(g_debugDraw.g_camera->m_width, 0)).x;
 
-    b2PolygonShape obstacle;
-    obstacle.SetAsBox(25.0f, 2.0f, b2Vec2((x / 2),  10.0f), 0);
+//    b2PolygonShape obstacle;
+//    obstacle.SetAsBox(25.0f, 2.0f, b2Vec2((x / 2),  10.0f), 0);
 
-    CreateObstacle(obstacle);
+//    CreateObstacle(obstacle);
 
     m_size = FloatRange(0.5f, 0.8f);
 
-    debugDraw.SetColor(Qt::darkCyan);
+    g_debugDraw.SetColor(Qt::darkMagenta);
 }
 
 B2Emitter::~B2Emitter()
@@ -137,6 +137,64 @@ void B2Emitter::Step(Settings *settings)
     }
 }
 
+void B2Emitter::SetParticlesSpeed(uint value)
+{
+
+}
+
+uint B2Emitter::GetParticlesSpeed()
+{
+
+}
+
+void B2Emitter::SetParticlesSize(uint value)
+{
+
+}
+
+uint B2Emitter::GetParticlesSize()
+{
+
+}
+
+void B2Emitter::SetParticlesSaturation(uint value)
+{
+
+}
+
+uint B2Emitter::GetParticlesSaturation()
+{
+
+}
+
+void B2Emitter::SetParticlesColor(uint value)
+{
+    g_debugDraw.SetColor(value);
+}
+
+uint B2Emitter::GetParticlesColor()
+{
+    QColor q_color = g_debugDraw.GetColor();
+
+    int color;
+    color = q_color.alpha();
+    color = (color << 8) + q_color.blue();
+    color = (color << 8) + q_color.green();
+    color = (color << 8) + q_color.red();
+
+    return color;
+}
+
+void B2Emitter::SetParticlesTransparency(uint value)
+{
+
+}
+
+uint B2Emitter::GetParticlesTransparency()
+{
+
+}
+
 b2Shape *B2Emitter::CreateTriangle()
 {
     b2Transform xf1;
@@ -146,21 +204,15 @@ b2Shape *B2Emitter::CreateTriangle()
     b2Vec2 vertices[3];
 
     b2PolygonShape *triangle = new b2PolygonShape();
+    float32 size;
 
-    if (m_isEqualSize) {
-        float32 size = m_size.GetLeftBound();
-        vertices[0] = b2Mul(xf1, b2Vec2(size, -size));
-        vertices[1] = b2Mul(xf1, b2Vec2(-size, -size));
-        vertices[2] = b2Mul(xf1, b2Vec2(-size, size));
-        triangle->Set(vertices, 3);
-    }
-    else {
-        float32 size = RandomFloat(m_size.GetLeftBound(), m_size.GetRightBound());
-        vertices[0] = b2Mul(xf1, b2Vec2(size, -size));
-        vertices[1] = b2Mul(xf1, b2Vec2(-size, -size));
-        vertices[2] = b2Mul(xf1, b2Vec2(-size, size));
-        triangle->Set(vertices, 3);
-    }
+    if (m_isEqualSize) size = m_size.GetLeftBound();
+    else size = RandomFloat(m_size.GetLeftBound(), m_size.GetRightBound());
+
+    vertices[0] = b2Mul(xf1, b2Vec2(size, -size));
+    vertices[1] = b2Mul(xf1, b2Vec2(-size, -size));
+    vertices[2] = b2Mul(xf1, b2Vec2(-size, size));
+    triangle->Set(vertices, 3);
 
     return triangle;
 }
@@ -168,17 +220,13 @@ b2Shape *B2Emitter::CreateTriangle()
 b2Shape *B2Emitter::CreateCircle()
 {
     b2CircleShape *circle = new b2CircleShape();
+    float32 radius;
 
-    if (m_isEqualSize) {
-        float32 radius = m_size.GetLeftBound();
-        circle->m_radius = radius;
-        circle->m_p.Set(-1 * radius, radius);
-    }
-    else {
-        float32 radius = RandomFloat(m_size.GetLeftBound(), m_size.GetRightBound());
-        circle->m_radius = radius;
-        circle->m_p.Set(-1 * radius, radius);
-    }
+    if (m_isEqualSize) radius = m_size.GetLeftBound();
+    else radius = RandomFloat(m_size.GetLeftBound(), m_size.GetRightBound());
+
+    circle->m_radius = radius;
+    circle->m_p.Set(-1 * radius, radius);
 
     return circle;
 }
@@ -186,14 +234,12 @@ b2Shape *B2Emitter::CreateCircle()
 b2Shape *B2Emitter::CreateRectangle()
 {
     b2PolygonShape *rectangle = new b2PolygonShape();
-    if (m_isEqualSize) {
-        float32 size = m_size.GetLeftBound();
-        rectangle->SetAsBox(size, size, b2Vec2(-1 * size, 0.0f), 0.0f);
-    }
-    else {
-        float32 size = RandomFloat(m_size.GetLeftBound(), m_size.GetRightBound());
-        rectangle->SetAsBox(size, size, b2Vec2(-1 * size, 0.0f), 0.0f);
-    }
+    float32 size;
+
+    if (m_isEqualSize) size = m_size.GetLeftBound();
+    else size = RandomFloat(m_size.GetLeftBound(), m_size.GetRightBound());
+
+    rectangle->SetAsBox(size, size, b2Vec2(-1 * size, 0.0f), 0.0f);
 
     return rectangle;
 }
@@ -276,15 +322,4 @@ uint B2Emitter::GetMaxFiguresCount()
 void B2Emitter::SetMaxFiguresCount(uint count)
 {
     m_maxFigures = count;
-}
-
-
-QColor B2Emitter::GetColor()
-{
-    return g_debugDraw.GetColor();
-}
-
-void B2Emitter::SetColor(const QColor &color)
-{
-    g_debugDraw.SetColor(color);
 }

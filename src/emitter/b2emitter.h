@@ -40,7 +40,7 @@ struct Settings {
         velocityIterations = 8;
         positionIterations = 3;
         drawShapes = true;
-        drawJoints = true;
+        drawJoints = false;
         drawAABBs = false;
         drawContactPoints = false;
         drawContactNormals = false;
@@ -108,25 +108,25 @@ public:
     }
 
     // todo need implement this methods
-    void SetParticlesSpeed(uint value) {  }
+    void SetParticlesSpeed(uint value);
 
-    uint GetParticlesSpeed() {  }
+    uint GetParticlesSpeed();
 
-    void SetParticlesSize(uint value) {  }
+    void SetParticlesSize(uint value);
 
-    uint GetParticlesSize() {  }
+    uint GetParticlesSize();
 
-    void SetParticlesSaturation(uint value) {  }
+    void SetParticlesSaturation(uint value);
 
-    uint GetParticlesSaturation() {  }
+    uint GetParticlesSaturation();
 
-    void SetParticlesColor(uint value) { }
+    void SetParticlesColor(uint value);
 
-    uint GetParticlesColor() { }
+    uint GetParticlesColor();
 
-    void SetParticlesTransparency(uint value) { }
+    void SetParticlesTransparency(uint value);
 
-    uint GetParticlesTransparency() { }
+    uint GetParticlesTransparency();
 
     void SetId(uint id)
     {

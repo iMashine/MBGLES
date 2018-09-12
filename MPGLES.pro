@@ -101,7 +101,8 @@ HEADERS += \
     src/ptextures.h \
     src/rendertriangles.h \
     src/shaderprogram.h \
-    src/mainopengloffscreensurface.h
+    src/mainopengloffscreensurface.h \
+    src/utils/colorconverter.h
 
 SOURCES += \
     include/_core/mp.cpp \
@@ -119,6 +120,7 @@ SOURCES += \
     src/ptextures.cpp \
     src/rendertriangles.cpp \
     src/shaderprogram.cpp \
-    src/mainopengloffscreensurface.cpp
+    src/mainopengloffscreensurface.cpp \
+    src/utils/colorconverter.cpp
 
 

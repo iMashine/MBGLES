@@ -83,5 +83,5 @@ QColor DebugDraw::GetColor() const
 
 void DebugDraw::SetColor(const QColor &value)
 {
-    m_mainColor = value;
+    m_mainColor = QColor(Qt::darkYellow);
 }
